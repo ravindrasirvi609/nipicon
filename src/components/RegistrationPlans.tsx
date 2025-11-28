@@ -139,10 +139,6 @@ const RegistrationPlans: React.FC = () => {
       errors.pincode = "Pincode must be 6 digits";
     }
 
-    if (selectedPlan?.name === "OPF/OBRF Members" && !formData.memberId) {
-      errors.memberId = "Member ID is required for OPF/OBRF Members";
-    }
-
     // Add more validations as needed
 
     setFormErrors(errors);
@@ -209,7 +205,13 @@ const RegistrationPlans: React.FC = () => {
     }
 
     try {
-      totalAmount = includeGalaDinner ? plan.spot + 1500 : plan.spot;
+      const currency = plan.currency || "INR";
+      let galaDinnerPrice = 0;
+      if (includeGalaDinner) {
+        if (currency === "INR") galaDinnerPrice = 1500;
+        else if (currency === "USD") galaDinnerPrice = 20;
+      }
+      totalAmount = plan.spot + galaDinnerPrice;
 
       // Create Razorpay order
       const orderResponse = await fetch("/api/razorpay-order", {
@@ -217,7 +219,7 @@ const RegistrationPlans: React.FC = () => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ amount: totalAmount }),
+        body: JSON.stringify({ amount: totalAmount, currency }),
       });
 
       if (!orderResponse.ok) {
@@ -287,31 +289,40 @@ const RegistrationPlans: React.FC = () => {
   const PriceDisplay = ({
     label,
     price,
+    currency = "INR",
     className,
   }: {
     label: string;
     price: number;
+    currency?: string;
     className?: string;
   }) => (
     <div className="flex justify-between items-center mb-2">
       <span className="text-sm font-medium">{label}:</span>
-      <span className={`text-lg font-bold ${className}`}>₹{price}</span>
+      <span className={`text-lg font-bold ${className}`}>
+        {currency === "USD" ? "$" : "₹"}
+        {price}
+      </span>
     </div>
   );
 
   const RegistrationCard = ({ plan }: { plan: Plan }) => (
-    <div className="bg-white shadow-xl rounded-lg overflow-hidden transition-transform duration-300 hover:scale-105">
-      <div className="bg-primary text-white py-4 px-6">
+    <div className="bg-white shadow-xl rounded-lg overflow-hidden transition-transform duration-300 hover:scale-105 border border-gray-200">
+      <div className="bg-indigo-600 text-white py-4 px-6">
         <h3 className="text-2xl font-semibold">{plan.name}</h3>
       </div>
       <div className="p-6">
-        <p className="text-gray-600 mb-4">{plan.description}</p>
-        
-        <PriceDisplay label="Spot" price={plan.spot} />
+        <p className="text-gray-700 mb-4 font-medium">{plan.description}</p>
+
+        <PriceDisplay
+          label="Fees (before 30-Dec-2025)"
+          price={plan.spot}
+          currency={plan.currency}
+        />
         <div className="mt-6">
           <button
             onClick={() => openModal(plan)}
-            className="w-full bg-accent text-white font-semibold py-3 px-4 rounded-md hover:bg-secondary transition duration-300"
+            className="w-full bg-amber-500 text-white font-bold py-3 px-4 rounded-md hover:bg-amber-600 transition duration-300 shadow-md"
           >
             Register Now
           </button>
@@ -323,32 +334,13 @@ const RegistrationPlans: React.FC = () => {
   return (
     <div className="bg-gradient-to-r from-blue-50 to-purple-50 min-h-screen py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
-        <h2 className="text-4xl font-bold mb-8 text-center text-primary">
+        <h2 className="text-4xl font-bold mb-8 text-center text-indigo-900">
           Registration Plans
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
           {plans.map((plan, index) => (
             <RegistrationCard key={index} plan={plan} />
           ))}
-          <div className="bg-white shadow-xl rounded-lg overflow-hidden transition-transform duration-300 hover:scale-105">
-            <div className="bg-primary text-white py-4 px-6">
-              <h3 className="text-2xl font-semibold">Accompanying Person</h3>
-            </div>
-            <div className="p-6">
-              <p className="text-gray-600 mb-4">
-                Access Food Area and lunch, No Entry for scientific session
-              </p>
-              
-              <PriceDisplay label="Spot" price={1770} />
-              <div className="mt-6">
-                <Link href={"https://rzp.io/l/g60dnQz"}>
-                  <button className="w-full bg-accent text-white font-semibold py-3 px-4 rounded-md hover:bg-secondary transition duration-300">
-                    Register Now
-                  </button>
-                </Link>
-              </div>
-            </div>
-          </div>
         </div>
       </div>
 
@@ -357,8 +349,8 @@ const RegistrationPlans: React.FC = () => {
           <div className="bg-white rounded-lg p-8 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
             {isProcessingTransaction ? (
               <div className="flex flex-col items-center justify-center h-64 p-6 bg-white shadow-lg rounded-lg">
-                <div className="animate-spin rounded-full h-24 w-24 border-t-4 border-b-4 border-primary mb-4"></div>
-                <p className="mt-2 text-xl font-semibold text-primary">
+                <div className="animate-spin rounded-full h-24 w-24 border-t-4 border-b-4 border-indigo-600 mb-4"></div>
+                <p className="mt-2 text-xl font-semibold text-indigo-600">
                   Please keep this window open. You will be automatically
                   redirected. Your transaction is being processed... Do not
                   refresh the page.
@@ -371,14 +363,14 @@ const RegistrationPlans: React.FC = () => {
                   seconds...
                 </p>
                 <div className="mt-4">
-                  <span className="text-lg font-semibold text-primary">
+                  <span className="text-lg font-semibold text-indigo-600">
                     {countdown}
                   </span>
                 </div>
               </div>
             ) : (
               <>
-                <h2 className="text-2xl font-bold mb-4">
+                <h2 className="text-2xl font-bold mb-4 text-gray-900">
                   Register for {selectedPlan?.name}
                 </h2>
                 <RegistrationForm
@@ -401,7 +393,7 @@ const RegistrationPlans: React.FC = () => {
                   className={`w-full font-bold py-3 px-6 rounded-md transition duration-300 ${
                     isSubmitting
                       ? "bg-gray-400 cursor-not-allowed"
-                      : "bg-accent text-white hover:bg-secondary"
+                      : "bg-amber-500 text-white hover:bg-amber-600"
                   }`}
                 >
                   {isSubmitting ? (
@@ -428,7 +420,9 @@ const RegistrationPlans: React.FC = () => {
                       Submitting...
                     </div>
                   ) : (
-                    `Register and Pay (₹${selectedPlan?.spot})`
+                    `Register and Pay (${
+                      selectedPlan?.currency === "USD" ? "$" : "₹"
+                    }${selectedPlan?.spot})`
                   )}
                 </button>
                 <button

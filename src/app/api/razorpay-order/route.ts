@@ -4,7 +4,7 @@ import Razorpay from "razorpay";
 export async function POST(req: NextRequest) {
   try {
     // Parse the request body
-    const { amount } = await req.json();
+    const { amount, currency = "INR" } = await req.json();
 
     if (!amount || isNaN(amount)) {
       return NextResponse.json({ error: "Invalid amount" }, { status: 400 });
@@ -18,8 +18,8 @@ export async function POST(req: NextRequest) {
 
     // Create an order
     const options = {
-      amount: Math.round(amount * 100), // Convert to paise and ensure it's an integer
-      currency: "INR",
+      amount: Math.round(amount * 100), // Convert to paise/cents and ensure it's an integer
+      currency: currency,
       receipt: `order_rcptid_${Date.now()}`,
       payment_capture: 1,
     };

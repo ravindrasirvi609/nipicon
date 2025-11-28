@@ -124,8 +124,8 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
           {...getRootProps()}
           className={`border-2 border-dashed rounded-lg p-6 text-center cursor-pointer transition-colors ${
             isDragActive
-              ? "border-accent bg-accent bg-opacity-10"
-              : "border-gray-300 hover:border-accent"
+              ? "border-amber-500 bg-amber-500 bg-opacity-10"
+              : "border-gray-300 hover:border-amber-500"
           }`}
         >
           <input {...getInputProps()} />
@@ -152,16 +152,16 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
           )}
         </div>
         {uploadError && (
-          <p className="text-danger text-sm mt-2">{uploadError}</p>
+          <p className="text-red-600 text-sm mt-2">{uploadError}</p>
         )}
         {errors.imageUrl && (
-          <p className="text-danger text-sm mt-1">{errors.imageUrl}</p>
+          <p className="text-red-600 text-sm mt-1">{errors.imageUrl}</p>
         )}
         {isUploading && (
           <div className="mt-2">
             <div className="bg-gray-200 rounded-full h-2.5">
               <div
-                className="bg-accent h-2.5 rounded-full"
+                className="bg-amber-500 h-2.5 rounded-full"
                 style={{ width: `${uploadProgress}%` }}
               ></div>
             </div>
@@ -197,14 +197,14 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
               type="button"
               onClick={handleAbstractSubmission}
               disabled={isAbstractFetching}
-              className={`bg-accent text-light px-4 py-2 rounded-md hover:bg-secondary transition duration-300 ${
+              className={`bg-amber-500 text-white px-4 py-2 rounded-md hover:bg-indigo-700 transition duration-300 ${
                 isAbstractFetching ? "opacity-50 cursor-not-allowed" : ""
               }`}
             >
               {isAbstractFetching ? "Fetching..." : "Fetch Abstract Details"}
             </button>
             {abstractError && (
-              <p className="text-danger mt-2">{abstractError}</p>
+              <p className="text-red-600 mt-2">{abstractError}</p>
             )}
           </div>
         )}
@@ -226,7 +226,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
             to Rejection of Registration & payment will be nonrefundable.
           </p>
           {errors.memberId && (
-            <p className="text-danger text-sm mt-1">{errors.memberId}</p>
+            <p className="text-red-600 text-sm mt-1">{errors.memberId}</p>
           )}
         </div>
       )}
@@ -260,7 +260,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
           className="w-full p-2 border rounded"
         />
         {errors.name && (
-          <p className="text-danger text-sm mt-1">{errors.name}</p>
+          <p className="text-red-600 text-sm mt-1">{errors.name}</p>
         )}
         <p className="text-sm text-gray-600 mt-1">
           Spelling should be correct. The same name will be printed on the
@@ -279,7 +279,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
           className="w-full p-2 border rounded"
         />
         {errors.email && (
-          <p className="text-danger text-sm mt-1">{errors.email}</p>
+          <p className="text-red-600 text-sm mt-1">{errors.email}</p>
         )}
       </div>
 
@@ -295,7 +295,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
           maxLength={10}
         />
         {errors.whatsappNumber && (
-          <p className="text-danger text-sm mt-1">{errors.whatsappNumber}</p>
+          <p className="text-red-600 text-sm mt-1">{errors.whatsappNumber}</p>
         )}
       </div>
 
@@ -313,7 +313,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
           <option value="Other">Other</option>
         </select>
         {errors.gender && (
-          <p className="text-danger text-sm mt-1">{errors.gender}</p>
+          <p className="text-red-600 text-sm mt-1">{errors.gender}</p>
         )}
       </div>
 
@@ -327,7 +327,9 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
           required
           className="w-full p-2 border rounded"
         />
-        {errors.dob && <p className="text-danger text-sm mt-1">{errors.dob}</p>}
+        {errors.dob && (
+          <p className="text-red-600 text-sm mt-1">{errors.dob}</p>
+        )}
         <p className="text-sm text-gray-600 mt-1">
           Kindly enter correct Date of Birth to receive E-Certificate of
           conference on your Digilocker account linked with your Aadhar.
@@ -359,7 +361,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
           maxLength={12}
         />
         {errors.AadharNumber && (
-          <p className="text-danger text-sm mt-1">{errors.AadharNumber}</p>
+          <p className="text-red-600 text-sm mt-1">{errors.AadharNumber}</p>
         )}
 
         <p className="text-sm text-gray-600 mt-1">
@@ -380,7 +382,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
           className="w-full p-2 border rounded"
         />
         {errors.affiliation && (
-          <p className="text-danger text-sm mt-1">{errors.affiliation}</p>
+          <p className="text-red-600 text-sm mt-1">{errors.affiliation}</p>
         )}
       </div>
 
@@ -394,7 +396,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
           className="w-full p-2 border rounded"
         />
         {errors.designation && (
-          <p className="text-danger text-sm mt-1">{errors.designation}</p>
+          <p className="text-red-600 text-sm mt-1">{errors.designation}</p>
         )}
       </div>
 
@@ -410,7 +412,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
           className="w-full p-2 border rounded"
         />
         {errors.address && (
-          <p className="text-danger text-sm mt-1">{errors.address}</p>
+          <p className="text-red-600 text-sm mt-1">{errors.address}</p>
         )}
       </div>
 
@@ -425,7 +427,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
           className="w-full p-2 border rounded"
         />
         {errors.city && (
-          <p className="text-danger text-sm mt-1">{errors.city}</p>
+          <p className="text-red-600 text-sm mt-1">{errors.city}</p>
         )}
       </div>
 
@@ -448,7 +450,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
           ))}
         </select>
         {errors.state && (
-          <p className="text-danger text-sm mt-1">{errors.state}</p>
+          <p className="text-red-600 text-sm mt-1">{errors.state}</p>
         )}
       </div>
 
@@ -464,7 +466,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
           maxLength={6}
         />
         {errors.pincode && (
-          <p className="text-danger text-sm mt-1">{errors.pincode}</p>
+          <p className="text-red-600 text-sm mt-1">{errors.pincode}</p>
         )}
       </div>
 
@@ -479,7 +481,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
           className="w-full p-2 border rounded"
         />
         {errors.country && (
-          <p className="text-danger text-sm mt-1">{errors.country}</p>
+          <p className="text-red-600 text-sm mt-1">{errors.country}</p>
         )}
       </div>
 

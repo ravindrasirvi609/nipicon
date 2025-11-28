@@ -95,8 +95,8 @@ export interface RegistrationInfo {
 export interface Plan {
   name: string;
   description: string;
-
   spot: number;
+  currency?: string;
 }
 
 export interface Abstract {

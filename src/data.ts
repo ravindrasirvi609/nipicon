@@ -360,34 +360,52 @@ export const designationOptions = [
 
 export const plans: Plan[] = [
   {
-    name: "OPF/OBRF Members",
+    name: "UG or PharmD Student",
     description: "Includes entry to all sessions and conference kit.",
-
-    spot: 2950,
+    spot: 1500,
+    currency: "INR",
   },
   {
-    name: "Students (UG /PG)",
+    name: "PG or PhD Student",
     description: "Includes entry to all sessions and conference kit.",
-
-    spot: 3070,
+    spot: 2500,
+    currency: "INR",
   },
   {
-    name: "Research Scholars & Faculties",
+    name: "Academicians",
     description: "Includes entry to all sessions, conference kit, and lunch.",
-
-    spot: 4190,
+    spot: 3000,
+    currency: "INR",
   },
   {
-    name: "Industry Professionals",
+    name: "Industrial Persons",
     description: "Includes entry to all sessions, conference kit, and lunch.",
-
-    spot: 5569,
+    spot: 4000,
+    currency: "INR",
   },
   {
-    name: "International Delegates",
+    name: "Foreign Delegates",
     description: "Includes entry to all sessions, conference kit, and lunch.",
-
-    spot: 212 * 84,
+    spot: 200,
+    currency: "USD",
+  },
+  {
+    name: "Foreign Presenter (Online)",
+    description: "Includes online presentation slot.",
+    spot: 100,
+    currency: "USD",
+  },
+  {
+    name: "Accompanying Person (Indian)",
+    description: "Access Food Area and lunch, No Entry for scientific session",
+    spot: 1800,
+    currency: "INR",
+  },
+  {
+    name: "Accompanying Person (Foreign)",
+    description: "Access Food Area and lunch, No Entry for scientific session",
+    spot: 50,
+    currency: "USD",
   },
 ];
 
