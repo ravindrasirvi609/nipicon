@@ -14,7 +14,6 @@ export async function POST(req: NextRequest) {
     const requiredFields = [
       "fullName",
       "dateOfBirth",
-      "aadharNumber",
       "organization",
       "position",
       "email",

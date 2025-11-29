@@ -13,7 +13,6 @@ const RegistrationPlans: React.FC = () => {
   const [selectedPlan, setSelectedPlan] = useState<Plan | null>(null);
   const [showModal, setShowModal] = useState(false);
   const [formErrors, setFormErrors] = useState<{ [key: string]: string }>({});
-  const [includeGalaDinner, setIncludeGalaDinner] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [formData, setFormData] = useState<RegistrationFormData>({
     email: "",
@@ -31,19 +30,14 @@ const RegistrationPlans: React.FC = () => {
     registrationType: "",
     applyingAs: "Individual",
     registeringAs: "Delegate",
-    needAccommodation: false,
-    dietaryRequirements: "",
-    specialAssistance: "",
     Salutations: "Mr.",
     imageUrl: "",
     dob: "",
-    AadharNumber: "",
     memberId: "",
     institute: "",
     gender: "Male",
     abstractSubmitted: false,
     abstractId: null,
-    includeGalaDinner: false,
     paymentAmount: 0,
     transactionId: "",
     bankName: "",
@@ -60,14 +54,6 @@ const RegistrationPlans: React.FC = () => {
       ...prevState,
       [name]:
         type === "checkbox" ? (e.target as HTMLInputElement).checked : value,
-    }));
-  };
-
-  const handleGalaDinnerChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setIncludeGalaDinner(e.target.checked);
-    setFormData((prevState) => ({
-      ...prevState,
-      includeGalaDinner: e.target.checked,
     }));
   };
 
@@ -263,8 +249,6 @@ const RegistrationPlans: React.FC = () => {
               onInputChange={handleInputChange}
               onImageUpload={handleImageUpload}
               errors={formErrors}
-              includeGalaDinner={includeGalaDinner}
-              handleGalaDinnerChange={handleGalaDinnerChange}
               selectedPlanName={selectedPlan?.name}
             />
             {submitError && (

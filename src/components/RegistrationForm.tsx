@@ -1,7 +1,6 @@
 import { useFirebaseStorage } from "@/app/hooks/useFirebaseStorage";
 import { indianStates } from "@/data";
 import { RegistrationFormData } from "@/lib/interface";
-import axios from "axios";
 import Image from "next/image";
 import React, { useCallback, useState } from "react";
 import { useDropzone } from "react-dropzone";
@@ -13,8 +12,6 @@ interface RegistrationFormProps {
   ) => void;
   onImageUpload: (file: File) => Promise<void>;
   errors: { [key: string]: string };
-  includeGalaDinner: boolean;
-  handleGalaDinnerChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   selectedPlanName?: string;
 }
 
@@ -23,8 +20,6 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
   onInputChange,
   onImageUpload,
   errors,
-  includeGalaDinner,
-  handleGalaDinnerChange,
   selectedPlanName,
 }) => {
   const {
@@ -34,97 +29,54 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
     uploadFile,
   } = useFirebaseStorage();
   const [imageFile, setImageFile] = useState<File | null>(null);
-  const [abstractError, setAbstractError] = useState("");
-  const [isAbstractFetching, setIsAbstractFetching] = useState(false);
-  const [abstractSubmitted, setAbstractSubmitted] = useState(false);
-  const [abstractCode, setAbstractCode] = useState("");
-  const [abstractDetails, setAbstractDetails] = useState(null);
+  const [paymentProofFile, setPaymentProofFile] = useState<File | null>(null);
+  const [idCardFile, setIdCardFile] = useState<File | null>(null);
+  const [uploadingField, setUploadingField] = useState<string | null>(null);
 
-  const handleAbstractSubmission = async () => {
-    setIsAbstractFetching(true);
-    setAbstractError("");
+  const handleProfileImageUpload = async (file: File) => {
     try {
-      const response = await axios.get(`/api/abstract/${abstractCode}`);
-      if (response.data) {
-        setAbstractDetails(response.data);
-        // Pre-fill form data
-        onInputChange({
-          target: { name: "email", value: response.data.email },
-        } as React.ChangeEvent<HTMLInputElement>);
-        onInputChange({
-          target: {
-            name: "whatsappNumber",
-            value: response.data.whatsappNumber,
-          },
-        } as React.ChangeEvent<HTMLInputElement>);
-        onInputChange({
-          target: { name: "name", value: response.data.name },
-        } as React.ChangeEvent<HTMLInputElement>);
-        onInputChange({
-          target: { name: "affiliation", value: response.data.affiliation },
-        } as React.ChangeEvent<HTMLInputElement>);
-        onInputChange({
-          target: { name: "designation", value: response.data.designation },
-        } as React.ChangeEvent<HTMLInputElement>);
-        onInputChange({
-          target: { name: "address", value: response.data.address },
-        } as React.ChangeEvent<HTMLInputElement>);
-        onInputChange({
-          target: { name: "city", value: response.data.city },
-        } as React.ChangeEvent<HTMLInputElement>);
-        onInputChange({
-          target: { name: "state", value: response.data.state },
-        } as React.ChangeEvent<HTMLInputElement>);
-        onInputChange({
-          target: { name: "pincode", value: response.data.pincode },
-        } as React.ChangeEvent<HTMLInputElement>);
-        onInputChange({
-          target: { name: "abstractId", value: response.data._id },
-        } as React.ChangeEvent<HTMLInputElement>);
-        onInputChange({
-          target: { name: "abstractSubmitted", value: true },
-        } as unknown as React.ChangeEvent<HTMLInputElement>);
-      }
+      setImageFile(file);
+      setUploadingField("profileImage");
+      await onImageUpload(file);
+      setUploadingField(null);
     } catch (error) {
-      console.error("Error fetching abstract details:", error);
-      setAbstractError(
-        "Failed to fetch abstract details. Please check your abstract code."
-      );
-    } finally {
-      setIsAbstractFetching(false);
+      console.error("Failed to upload profile image:", error);
+      setUploadingField(null);
+      setImageFile(null);
+      alert("Failed to upload profile image. Please try again.");
     }
   };
 
-  const onDrop = useCallback(
-    (acceptedFiles: File[]) => {
-      if (acceptedFiles[0]) {
-        setImageFile(acceptedFiles[0]);
-        onImageUpload(acceptedFiles[0]);
-      }
-    },
-    [onImageUpload]
-  );
-
   const handlePaymentProofUpload = async (file: File) => {
     try {
+      setPaymentProofFile(file);
+      setUploadingField("paymentProof");
       const url = await uploadFile(file);
       onInputChange({
         target: { name: "paymentProofUrl", value: url },
       } as any);
+      setUploadingField(null);
     } catch (error) {
       console.error("Failed to upload payment proof:", error);
+      setUploadingField(null);
+      setPaymentProofFile(null);
       alert("Failed to upload payment proof. Please try again.");
     }
   };
 
   const handleIdCardUpload = async (file: File) => {
     try {
+      setIdCardFile(file);
+      setUploadingField("idCard");
       const url = await uploadFile(file);
       onInputChange({
         target: { name: "idCardUrl", value: url },
       } as any);
+      setUploadingField(null);
     } catch (error) {
       console.error("Failed to upload ID card:", error);
+      setUploadingField(null);
+      setIdCardFile(null);
       alert("Failed to upload ID card. Please try again.");
     }
   };
@@ -148,7 +100,11 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
   });
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
-    onDrop: (acceptedFiles) => onImageUpload(acceptedFiles[0]),
+    onDrop: (acceptedFiles) => {
+      if (acceptedFiles[0]) {
+        handleProfileImageUpload(acceptedFiles[0]);
+      }
+    },
     accept: { "image/*": [] },
     multiple: false,
   });
@@ -167,9 +123,11 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
         <div
           {...getRootProps()}
           className={`border-2 border-dashed rounded-lg p-6 text-center cursor-pointer transition-colors ${
-            isDragActive
-              ? "border-amber-500 bg-amber-500 bg-opacity-10"
-              : "border-gray-300 hover:border-amber-500"
+            imageFile
+              ? "border-green-500 bg-green-50"
+              : isDragActive
+                ? "border-amber-500 bg-amber-500 bg-opacity-10"
+                : "border-gray-300 hover:border-amber-500"
           }`}
         >
           <input {...getInputProps()} />
@@ -182,7 +140,23 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
                 width={128}
                 height={128}
               />
-              <p className="text-sm text-gray-600">{imageFile.name}</p>
+              <svg
+                className="w-8 h-8 text-green-600 mb-2"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M5 13l4 4L19 7"
+                />
+              </svg>
+              <p className="text-green-600 font-medium">
+                Profile Picture Uploaded Successfully
+              </p>
+              <p className="text-sm text-gray-600 mt-1">{imageFile.name}</p>
             </div>
           ) : (
             <div>
@@ -201,11 +175,11 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
         {errors.imageUrl && (
           <p className="text-red-600 text-sm mt-1">{errors.imageUrl}</p>
         )}
-        {isUploading && (
+        {uploadingField === "profileImage" && isUploading && (
           <div className="mt-2">
             <div className="bg-gray-200 rounded-full h-2.5">
               <div
-                className="bg-amber-500 h-2.5 rounded-full"
+                className="bg-amber-500 h-2.5 rounded-full transition-all duration-300"
                 style={{ width: `${uploadProgress}%` }}
               ></div>
             </div>
@@ -329,17 +303,56 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
           </label>
           <div
             {...getIdCardRootProps()}
-            className="border-2 border-dashed rounded-lg p-6 text-center cursor-pointer transition-colors border-gray-300 hover:border-amber-500"
+            className={`border-2 border-dashed rounded-lg p-6 text-center cursor-pointer transition-colors ${
+              formData.idCardUrl
+                ? "border-green-500 bg-green-50"
+                : "border-gray-300 hover:border-amber-500"
+            }`}
           >
             <input {...getIdCardInputProps()} />
             {formData.idCardUrl ? (
-              <p className="text-green-600">ID Card Uploaded Successfully</p>
+              <div className="flex flex-col items-center">
+                <svg
+                  className="w-8 h-8 text-green-600 mb-2"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M5 13l4 4L19 7"
+                  />
+                </svg>
+                <p className="text-green-600 font-medium">
+                  ID Card Uploaded Successfully
+                </p>
+                {idCardFile && (
+                  <p className="text-sm text-gray-600 mt-1">
+                    {idCardFile.name}
+                  </p>
+                )}
+              </div>
             ) : (
               <p className="text-gray-600">
                 Drag & drop ID card here, or click to select
               </p>
             )}
           </div>
+          {uploadingField === "idCard" && isUploading && (
+            <div className="mt-2">
+              <div className="bg-gray-200 rounded-full h-2.5">
+                <div
+                  className="bg-amber-500 h-2.5 rounded-full transition-all duration-300"
+                  style={{ width: `${uploadProgress}%` }}
+                ></div>
+              </div>
+              <p className="text-sm text-gray-600 mt-1">
+                Uploading: {uploadProgress}%
+              </p>
+            </div>
+          )}
         </div>
       )}
 
@@ -411,42 +424,6 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
         )}
         <p className="text-sm text-gray-600 mt-1">
           Kindly enter correct Date of Birth to receive E-Certificate of
-          conference on your Digilocker account linked with your Aadhar.
-        </p>
-      </div>
-
-      <div className="mb-6">
-        <label className="flex items-center mb-2 text-gray-800 font-medium">
-          <input
-            type="checkbox"
-            name="includeGalaDinner"
-            checked={includeGalaDinner}
-            onChange={handleGalaDinnerChange}
-            value={includeGalaDinner ? "true" : "false"}
-            className="mr-2"
-          />
-          Include Networking Cum Gala Dinner (Additional ₹1500)
-        </label>
-      </div>
-
-      <div className="mb-4">
-        <label className="block mb-2 text-gray-800 font-medium">
-          Aadhar Number
-        </label>
-        <input
-          type="text"
-          name="AadharNumber"
-          value={formData.AadharNumber}
-          onChange={onInputChange}
-          className="w-full p-2 border rounded text-gray-900"
-          maxLength={12}
-        />
-        {errors.AadharNumber && (
-          <p className="text-red-600 text-sm mt-1">{errors.AadharNumber}</p>
-        )}
-
-        <p className="text-sm text-gray-600 mt-1">
-          Kindly enter correct Aadhar Number to receive E-Certificate of
           conference on your Digilocker account linked with your Aadhar.
         </p>
       </div>
@@ -568,19 +545,6 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
         )}
       </div>
 
-      <div className="mb-4">
-        <label className="flex items-center text-gray-800 font-medium">
-          <input
-            type="checkbox"
-            name="needAccommodation"
-            checked={formData.needAccommodation}
-            onChange={onInputChange}
-            className="mr-2"
-          />
-          Need Accommodation
-        </label>
-      </div>
-
       {/* Payment Details Section */}
       <div className="mt-8 border-t pt-6">
         <h3 className="text-xl font-bold mb-4 text-indigo-900">
@@ -698,19 +662,56 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
           </label>
           <div
             {...getPaymentProofRootProps()}
-            className="border-2 border-dashed rounded-lg p-6 text-center cursor-pointer transition-colors border-gray-300 hover:border-amber-500"
+            className={`border-2 border-dashed rounded-lg p-6 text-center cursor-pointer transition-colors ${
+              formData.paymentProofUrl
+                ? "border-green-500 bg-green-50"
+                : "border-gray-300 hover:border-amber-500"
+            }`}
           >
             <input {...getPaymentProofInputProps()} />
             {formData.paymentProofUrl ? (
-              <p className="text-green-600">
-                Payment Proof Uploaded Successfully
-              </p>
+              <div className="flex flex-col items-center">
+                <svg
+                  className="w-8 h-8 text-green-600 mb-2"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M5 13l4 4L19 7"
+                  />
+                </svg>
+                <p className="text-green-600 font-medium">
+                  Payment Proof Uploaded Successfully
+                </p>
+                {paymentProofFile && (
+                  <p className="text-sm text-gray-600 mt-1">
+                    {paymentProofFile.name}
+                  </p>
+                )}
+              </div>
             ) : (
               <p className="text-gray-600">
                 Drag & drop payment proof here, or click to select
               </p>
             )}
           </div>
+          {uploadingField === "paymentProof" && isUploading && (
+            <div className="mt-2">
+              <div className="bg-gray-200 rounded-full h-2.5">
+                <div
+                  className="bg-amber-500 h-2.5 rounded-full transition-all duration-300"
+                  style={{ width: `${uploadProgress}%` }}
+                ></div>
+              </div>
+              <p className="text-sm text-gray-600 mt-1">
+                Uploading: {uploadProgress}%
+              </p>
+            </div>
+          )}
         </div>
       </div>
     </form>

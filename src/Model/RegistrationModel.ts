@@ -16,7 +16,6 @@ const registrationSchema = new Schema({
   imageUrl: { type: String },
   gender: { type: String, enum: ["Male", "Female", "Other"] },
   dob: { type: Date },
-  AadharNumber: { type: Number },
 
   // Address Information
   address: { type: String },

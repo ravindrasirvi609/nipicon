@@ -10,7 +10,6 @@ export interface RegistrationFormData {
   gender: "Male" | "Female" | "Other";
   imageUrl: string;
   dob: string;
-  AadharNumber: string;
   address: string;
   city: string;
   state: string;
@@ -23,11 +22,7 @@ export interface RegistrationFormData {
   registeringAs: "Delegate" | "Delegate as Presenter";
   idCardUrl?: string;
   abstractSubmitted: boolean;
-  needAccommodation: boolean;
-  dietaryRequirements: string;
-  specialAssistance: string;
   abstractId: string | null;
-  includeGalaDinner: boolean;
 
   // Payment Details
   paymentAmount: number;
@@ -77,7 +72,6 @@ export interface RegistrationInfo {
     imageUrl?: string;
     gender?: string;
     dob?: string;
-    AadharNumber?: number;
     address?: string;
     city?: string;
     state?: string;
@@ -88,9 +82,6 @@ export interface RegistrationInfo {
     abstractSubmitted?: boolean;
     abstractId?: string;
     paymentStatus?: string;
-    needAccommodation?: boolean;
-    dietaryRequirements?: string;
-    specialAssistance?: string;
     registrationStatus?: string;
     createdAt?: string;
     updatedAt?: string;

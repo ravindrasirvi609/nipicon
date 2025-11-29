@@ -12,7 +12,6 @@ export interface Registration {
   imageUrl: string;
   gender: string;
   dob: string;
-  AadharNumber: number;
   address: string;
   city: string;
   state: string;
@@ -23,10 +22,6 @@ export interface Registration {
   abstractSubmitted: boolean;
   abstractId: string;
   paymentStatus: string;
-  needAccommodation: boolean;
-  includeGalaDinner: boolean;
-  dietaryRequirements: string;
-  specialAssistance: string;
   registrationStatus: string;
   createdAt: string;
   updatedAt: string;
@@ -55,7 +50,6 @@ export const exportToExcel = (
     "Image URL": item.imageUrl,
     Gender: item.gender,
     "Date of Birth": new Date(item.dob).toLocaleDateString(),
-    "Aadhar Number": item.AadharNumber,
     Address: item.address,
     City: item.city,
     State: item.state,
@@ -68,10 +62,6 @@ export const exportToExcel = (
     "Payment Status": item.paymentStatus,
     paymentAmount: item.paymentAmount,
     "Payment Date": new Date(item.paymentDate).toLocaleString(),
-    "Need Accommodation": item.needAccommodation ? "Yes" : "No",
-    "Include Gala Dinner": item.includeGalaDinner ? "Yes" : "No",
-    "Dietary Requirements": item.dietaryRequirements,
-    "Special Assistance": item.specialAssistance,
     "Registration Status": item.registrationStatus,
     "Created At": new Date(item.createdAt).toLocaleString(),
     "Updated At": new Date(item.updatedAt).toLocaleString(),
