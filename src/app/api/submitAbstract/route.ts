@@ -32,7 +32,26 @@ export async function POST(req: NextRequest) {
     const city = formData.get("city") as string;
     const state = formData.get("state") as string;
     const pincode = formData.get("pincode") as string;
-    const articleType = formData.get("articleType") as string;
+    const paperType = formData.get("paperType") as string;
+    const presentationType = formData.get("presentationType") as string;
+    const isForeignDelegate = formData.get("isForeignDelegate") === "true";
+    const declarationAccepted = formData.get("declarationAccepted") === "true";
+
+    // Pharma Innovator Award Fields
+    const isPharmaInnovatorAward =
+      formData.get("isPharmaInnovatorAward") === "true";
+    const supervisorName = formData.get("supervisorName") as string;
+    const supervisorDesignation = formData.get(
+      "supervisorDesignation"
+    ) as string;
+    const supervisorAffiliation = formData.get(
+      "supervisorAffiliation"
+    ) as string;
+    const supervisorAddress = formData.get("supervisorAddress") as string;
+    const supervisorEmail = formData.get("supervisorEmail") as string;
+    const supervisorContact = formData.get("supervisorContact") as string;
+    const declarationFormUrl = formData.get("declarationFormUrl") as string; // Assuming file upload handled on client or separate logic needed if file passed here
+    const briefProfileUrl = formData.get("briefProfileUrl") as string;
 
     if (
       !email ||
@@ -40,13 +59,14 @@ export async function POST(req: NextRequest) {
       !name ||
       !affiliation ||
       !title ||
-      !subject ||
+      (!subject && !isPharmaInnovatorAward) ||
       !file ||
       !address ||
       !city ||
       !state ||
       !pincode ||
-      !articleType
+      !paperType ||
+      !presentationType
     ) {
       return NextResponse.json(
         { message: "All required fields must be provided" },
@@ -63,7 +83,22 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const temporyAbstractCode = await abstractCodeGeneration();
+    let temporyAbstractCode = "";
+    if (isPharmaInnovatorAward) {
+      // Generate PIA code
+      const lastPIA = await AbstractModel.findOne({
+        temporyAbstractCode: { $regex: "^PIA" },
+      }).sort({ createdAt: -1 });
+      let sequence = 1;
+      if (lastPIA && lastPIA.temporyAbstractCode) {
+        const lastSeq = parseInt(lastPIA.temporyAbstractCode.slice(3));
+        if (!isNaN(lastSeq)) sequence = lastSeq + 1;
+      }
+      temporyAbstractCode = `PIA${sequence.toString().padStart(2, "0")}`;
+    } else {
+      temporyAbstractCode = await abstractCodeGeneration();
+    }
+
     const url = `${process.env.NEXT_PUBLIC_BASE_URL}/abstractForm/${temporyAbstractCode}`;
     const qrCodeBuffer = await QRCode.toBuffer(url);
     const qrCodeUrl = await uploadQRCodeToFirebase(
@@ -87,7 +122,19 @@ export async function POST(req: NextRequest) {
       pincode,
       qrCodeUrl,
       temporyAbstractCode,
-      articleType,
+      paperType,
+      presentationType,
+      isForeignDelegate,
+      declarationAccepted,
+      isPharmaInnovatorAward,
+      supervisorName,
+      supervisorDesignation,
+      supervisorAffiliation,
+      supervisorAddress,
+      supervisorEmail,
+      supervisorContact,
+      declarationFormUrl,
+      briefProfileUrl,
     };
 
     const newAbstract = new AbstractModel(abstractData);

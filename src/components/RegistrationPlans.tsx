@@ -1,10 +1,8 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import RegistrationForm from "./RegistrationForm";
 import { Plan, RegistrationFormData } from "@/lib/interface";
 import { useFirebaseStorage } from "@/app/hooks/useFirebaseStorage";
-import axios from "axios";
-import Link from "next/link";
 import { plans } from "@/data";
 
 const RegistrationPlans: React.FC = () => {
@@ -16,11 +14,13 @@ const RegistrationPlans: React.FC = () => {
   const [showModal, setShowModal] = useState(false);
   const [formErrors, setFormErrors] = useState<{ [key: string]: string }>({});
   const [includeGalaDinner, setIncludeGalaDinner] = useState(false);
-  const [isProcessingTransaction, setIsProcessingTransaction] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [formData, setFormData] = useState<RegistrationFormData>({
     email: "",
     whatsappNumber: "",
     name: "",
+    firstName: "",
+    lastName: "",
     affiliation: "",
     designation: "",
     address: "",
@@ -29,6 +29,8 @@ const RegistrationPlans: React.FC = () => {
     pincode: "",
     country: "",
     registrationType: "",
+    applyingAs: "Individual",
+    registeringAs: "Delegate",
     needAccommodation: false,
     dietaryRequirements: "",
     specialAssistance: "",
@@ -42,17 +44,13 @@ const RegistrationPlans: React.FC = () => {
     abstractSubmitted: false,
     abstractId: null,
     includeGalaDinner: false,
+    paymentAmount: 0,
+    transactionId: "",
+    bankName: "",
+    branchName: "",
+    paymentDate: "",
+    paymentProofUrl: "",
   });
-  const [countdown, setCountdown] = useState(10);
-
-  useEffect(() => {
-    if (isProcessingTransaction && countdown > 0) {
-      const timer = setInterval(() => {
-        setCountdown((prev) => prev - 1);
-      }, 1000);
-      return () => clearInterval(timer);
-    }
-  }, [isProcessingTransaction, countdown]);
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -145,16 +143,6 @@ const RegistrationPlans: React.FC = () => {
     return Object.keys(errors).length === 0;
   };
 
-  const initializeRazorpay = () => {
-    return new Promise((resolve) => {
-      const script = document.createElement("script");
-      script.src = "https://checkout.razorpay.com/v1/checkout.js";
-      script.onload = () => resolve(true);
-      script.onerror = () => resolve(false);
-      document.body.appendChild(script);
-    });
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedPlan) {
@@ -182,8 +170,8 @@ const RegistrationPlans: React.FC = () => {
       });
 
       if (registrationResponse.ok) {
-        const registration = await registrationResponse.json();
-        await makePayment(selectedPlan, registration.registration);
+        setShowModal(false);
+        setShowSuccessModal(true);
       } else {
         throw new Error("Failed to save registration");
       }
@@ -192,88 +180,8 @@ const RegistrationPlans: React.FC = () => {
       setSubmitError(
         "Failed to submit registration. Please check the form and try again."
       );
-    }
-  };
-
-  let totalAmount = 0;
-  const makePayment = async (plan: Plan, registration: any) => {
-    const res = await initializeRazorpay();
-
-    if (!res) {
-      alert("Razorpay SDK failed to load. Are you online?");
-      return;
-    }
-
-    try {
-      const currency = plan.currency || "INR";
-      let galaDinnerPrice = 0;
-      if (includeGalaDinner) {
-        if (currency === "INR") galaDinnerPrice = 1500;
-        else if (currency === "USD") galaDinnerPrice = 20;
-      }
-      totalAmount = plan.spot + galaDinnerPrice;
-
-      // Create Razorpay order
-      const orderResponse = await fetch("/api/razorpay-order", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ amount: totalAmount, currency }),
-      });
-
-      if (!orderResponse.ok) {
-        throw new Error("Failed to create Razorpay order");
-      }
-
-      const orderData = await orderResponse.json();
-
-      const options = {
-        name: "Operant Pharmacy Federation",
-        currency: orderData.currency,
-        amount: orderData.amount,
-        order_id: orderData.id,
-        description: `Payment for ${plan.name}`,
-        handler: async function (response: any) {
-          try {
-            setIsProcessingTransaction(true);
-
-            const transactionResponse = await axios.post(
-              "/api/save-transaction",
-              {
-                razorpay_order_id: response.razorpay_order_id,
-                razorpay_payment_id: response.razorpay_payment_id,
-                razorpay_signature: response.razorpay_signature,
-                amount: orderData.amount / 100,
-                currency: orderData.currency,
-                planName: plan.name,
-                customerName: registration.name,
-                customerEmail: registration.email,
-                customerPhone: registration.whatsappNumber,
-              }
-            );
-
-            window.location.href = `/abstractForm/${transactionResponse.data.registration._id}`;
-          } catch (error) {
-            console.error("Failed to save transaction:", error);
-          } finally {
-            setIsProcessingTransaction(false);
-
-            closeModal();
-          }
-        },
-        prefill: {
-          name: registration.name,
-          email: registration.email,
-          contact: registration.whatsappNumber,
-        },
-      };
-
-      const paymentObject = new (window as any).Razorpay(options);
-      paymentObject.open();
-    } catch (error) {
-      console.error("Payment failed:", error);
-      alert("Failed to initiate payment. Please try again.");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -298,8 +206,8 @@ const RegistrationPlans: React.FC = () => {
     className?: string;
   }) => (
     <div className="flex justify-between items-center mb-2">
-      <span className="text-sm font-medium">{label}:</span>
-      <span className={`text-lg font-bold ${className}`}>
+      <span className="text-sm font-medium text-gray-700">{label}:</span>
+      <span className={`text-lg font-bold text-indigo-900 ${className}`}>
         {currency === "USD" ? "$" : "₹"}
         {price}
       </span>
@@ -312,7 +220,7 @@ const RegistrationPlans: React.FC = () => {
         <h3 className="text-2xl font-semibold">{plan.name}</h3>
       </div>
       <div className="p-6">
-        <p className="text-gray-700 mb-4 font-medium">{plan.description}</p>
+        <p className="text-gray-800 mb-4 font-medium">{plan.description}</p>
 
         <PriceDisplay
           label="Fees (before 30-Dec-2025)"
@@ -347,92 +255,101 @@ const RegistrationPlans: React.FC = () => {
       {showModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-8 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-            {isProcessingTransaction ? (
-              <div className="flex flex-col items-center justify-center h-64 p-6 bg-white shadow-lg rounded-lg">
-                <div className="animate-spin rounded-full h-24 w-24 border-t-4 border-b-4 border-indigo-600 mb-4"></div>
-                <p className="mt-2 text-xl font-semibold text-indigo-600">
-                  Please keep this window open. You will be automatically
-                  redirected. Your transaction is being processed... Do not
-                  refresh the page.
-                </p>
-                <p className="mt-1 text-md font-medium text-gray-600">
-                  Please wait for{" "}
-                  <span id="countdown" className="font-bold">
-                    {countdown}
-                  </span>{" "}
-                  seconds...
-                </p>
-                <div className="mt-4">
-                  <span className="text-lg font-semibold text-indigo-600">
-                    {countdown}
-                  </span>
-                </div>
+            <h2 className="text-2xl font-bold mb-4 text-gray-900">
+              Register for {selectedPlan?.name}
+            </h2>
+            <RegistrationForm
+              formData={formData}
+              onInputChange={handleInputChange}
+              onImageUpload={handleImageUpload}
+              errors={formErrors}
+              includeGalaDinner={includeGalaDinner}
+              handleGalaDinnerChange={handleGalaDinnerChange}
+              selectedPlanName={selectedPlan?.name}
+            />
+            {submitError && (
+              <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
+                {submitError}
               </div>
-            ) : (
-              <>
-                <h2 className="text-2xl font-bold mb-4 text-gray-900">
-                  Register for {selectedPlan?.name}
-                </h2>
-                <RegistrationForm
-                  formData={formData}
-                  onInputChange={handleInputChange}
-                  onImageUpload={handleImageUpload}
-                  errors={formErrors}
-                  includeGalaDinner={includeGalaDinner}
-                  handleGalaDinnerChange={handleGalaDinnerChange}
-                  selectedPlanName={selectedPlan?.name}
-                />
-                {submitError && (
-                  <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
-                    {submitError}
-                  </div>
-                )}
-                <button
-                  onClick={handleSubmit}
-                  disabled={isSubmitting}
-                  className={`w-full font-bold py-3 px-6 rounded-md transition duration-300 ${
-                    isSubmitting
-                      ? "bg-gray-400 cursor-not-allowed"
-                      : "bg-amber-500 text-white hover:bg-amber-600"
-                  }`}
-                >
-                  {isSubmitting ? (
-                    <div className="flex items-center justify-center">
-                      <svg
-                        className="animate-spin h-5 w-5 mr-3 text-white"
-                        viewBox="0 0 24 24"
-                      >
-                        <circle
-                          className="opacity-25"
-                          cx="12"
-                          cy="12"
-                          r="10"
-                          stroke="currentColor"
-                          strokeWidth="4"
-                          fill="none"
-                        />
-                        <path
-                          className="opacity-75"
-                          fill="currentColor"
-                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                        />
-                      </svg>
-                      Submitting...
-                    </div>
-                  ) : (
-                    `Register and Pay (${
-                      selectedPlan?.currency === "USD" ? "$" : "₹"
-                    }${selectedPlan?.spot})`
-                  )}
-                </button>
-                <button
-                  onClick={closeModal}
-                  className="mt-4 w-full bg-gray-300 text-gray-800 font-bold py-3 px-6 rounded-md hover:bg-gray-400 transition duration-300"
-                >
-                  Close
-                </button>
-              </>
             )}
+            <button
+              onClick={handleSubmit}
+              disabled={isSubmitting}
+              className={`w-full font-bold py-3 px-6 rounded-md transition duration-300 ${
+                isSubmitting
+                  ? "bg-gray-400 cursor-not-allowed"
+                  : "bg-amber-500 text-white hover:bg-amber-600"
+              }`}
+            >
+              {isSubmitting ? (
+                <div className="flex items-center justify-center">
+                  <svg
+                    className="animate-spin h-5 w-5 mr-3 text-white"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                      fill="none"
+                    />
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                    />
+                  </svg>
+                  Submitting...
+                </div>
+              ) : (
+                "Submit Registration"
+              )}
+            </button>
+            <button
+              onClick={closeModal}
+              className="mt-4 w-full bg-gray-300 text-gray-800 font-bold py-3 px-6 rounded-md hover:bg-gray-400 transition duration-300"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
+
+      {showSuccessModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-8 max-w-md w-full text-center">
+            <div className="mb-4">
+              <svg
+                className="mx-auto h-16 w-16 text-green-500"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
+            </div>
+            <h2 className="text-2xl font-bold mb-4 text-gray-900">
+              Registration Submitted Successfully!
+            </h2>
+            <p className="text-gray-600 mb-6">
+              Thank you for your registration. Your payment details have been
+              submitted and are pending verification by the admin. Once
+              confirmed, you will receive your registration code via email.
+            </p>
+            <button
+              onClick={() => setShowSuccessModal(false)}
+              className="w-full bg-indigo-600 text-white font-bold py-3 px-6 rounded-md hover:bg-indigo-700 transition duration-300"
+            >
+              Close
+            </button>
           </div>
         </div>
       )}

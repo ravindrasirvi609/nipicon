@@ -15,7 +15,7 @@ const Navbar: React.FC = () => {
       <header className="bg-white text-black px-4 py-4 fixed w-full z-40 top-0 shadow-md">
         <div className="container mx-auto flex justify-between items-center">
           <Link href={"/"}>
-            <h1 className="font-black text-3xl text-black">PHARMANECIA 4.E</h1>
+            <h1 className="font-black text-3xl text-black">NIPiCON 2026</h1>
           </Link>
 
           <button className="lg:hidden focus:outline-none" onClick={toggleMenu}>
@@ -36,7 +36,14 @@ const Navbar: React.FC = () => {
                   Home
                 </Link>
               </li>
-
+              <li>
+                <Link
+                  href="/abstractForm"
+                  className="hover:text-ochre transition duration-300"
+                >
+                  Abstract Submission
+                </Link>
+              </li>
               <li>
                 <Link
                   href="/Registration"
@@ -60,7 +67,14 @@ const Navbar: React.FC = () => {
                   Home
                 </Link>
               </li>
-
+              <li>
+                <Link
+                  href="/abstractForm"
+                  className="block hover:text-ochre transition duration-300"
+                >
+                  Abstract Submission
+                </Link>
+              </li>
               <li>
                 <Link
                   href="/Registration"

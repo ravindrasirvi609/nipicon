@@ -106,7 +106,7 @@ export const sendEmail = async ({
           <>
             <Text>
               We regret to inform you that your abstract does not fully comply
-              with the Pharmanecia 4.E International Research Conference
+              with the NIPiCON 2026 International Research Conference
               guidelines. Kindly revise your abstract according to the provided
               guidelines and reviewer comments. Please resubmit the abstract by
               clicking View Submission Details.

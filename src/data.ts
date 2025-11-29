@@ -219,7 +219,7 @@ export const committee: CommitteeMember[] = [
   {
     name: "Dr. Gopal Natesan",
     designation: "LOC Chairman",
-    affiliation: "Pharmanecia 4.E",
+    affiliation: "NIPiCON 2026",
     image: "/profile/gopal.jpeg",
   },
   {
@@ -356,6 +356,14 @@ export const designationOptions = [
     value: "FD",
     label: "Faculty",
   },
+];
+
+export const tracks = [
+  "A. Next-Gen Formulations, Nanotechnology and Biotechnology",
+  "B. Pharmacology, Clinical Pharmacy & Patient Care",
+  "C. Pharmaceutical Analysis, Quality & Regulatory Science",
+  "D. Herbal Medicines & Natural Products",
+  "E. AI in Drug Discovery & Pharmaceutical Chemistry",
 ];
 
 export const plans: Plan[] = [
@@ -617,8 +625,8 @@ The future of AI in drug discovery is bright, but it must be guided by a strong 
     author: "Dr. Priya Natarajan",
     authorRole: "Professor of Pharmaceutical Sciences",
     excerpt:
-      "Discover the future of AI-driven drug discovery at the prestigious Pharmanecia 4.E conference in Tamil Nadu, India. March 7th-8th, 2025.",
-    content: `The Pharmanecia 4.E International Research Conference, hosted by JSS College of Pharmacy, Ooty, Tamil Nadu, is set to redefine pharmaceutical research with its focus on AI and Machine Learning-driven drug discovery. Held on March 7th-8th, 2025, this event will bring together experts in artificial intelligence, machine learning, and pharmaceutical sciences from across India and around the world.
+      "Discover the future of AI-driven drug discovery at the prestigious NIPiCON 2026 conference in Tamil Nadu, India. March 7th-8th, 2025.",
+    content: `The NIPiCON 2026 International Research Conference, hosted by JSS College of Pharmacy, Ooty, Tamil Nadu, is set to redefine pharmaceutical research with its focus on AI and Machine Learning-driven drug discovery. Held on March 7th-8th, 2025, this event will bring together experts in artificial intelligence, machine learning, and pharmaceutical sciences from across India and around the world.
 
 Tamil Nadu, a hub of pharmaceutical education and research, is the perfect backdrop for this groundbreaking event. Attendees will explore cutting-edge developments in AI and machine learning as applied to drug discovery and development. Topics will range from predictive algorithms to ethical issues surrounding AI-assisted drug design.
 
@@ -633,7 +641,7 @@ With India's booming pharmaceutical sector, this conference is poised to foster 
       "India",
     ],
     metaDescription:
-      "Explore AI and machine learning in drug discovery at Pharmanecia 4.E International Research Conference, Tamil Nadu, India. March 2025.",
+      "Explore AI and machine learning in drug discovery at NIPiCON 2026 International Research Conference, Tamil Nadu, India. March 2025.",
     keywords: [
       "AI in drug discovery",
       "pharmaceutical research in Tamil Nadu",
@@ -645,18 +653,18 @@ With India's booming pharmaceutical sector, this conference is poised to foster 
   {
     id: "5",
     title:
-      "Pharmanecia 4.E: India’s Leading AI and Machine Learning Drug Discovery Conference",
+      "NIPiCON 2026: India’s Leading AI and Machine Learning Drug Discovery Conference",
     slug: "pharmanecia-ai-ml-drug-conference-india",
     date: "2024-09-25",
     author: "Dr. Arun Kumar",
     authorRole: "Head of AI Research, PharmaTech Innovations",
     excerpt:
-      "Join global experts at Pharmanecia 4.E in Ooty, Tamil Nadu for insights into AI and ML in drug discovery. Hosted by JSS College of Pharmacy, March 2025.",
-    content: `Pharmanecia 4.E, India's premier conference on AI and Machine Learning-driven drug discovery, will take place at JSS College of Pharmacy, Ooty, Tamil Nadu on March 7th-8th, 2025. This international event will host leaders from both the pharmaceutical and tech industries, as well as top academic researchers.
+      "Join global experts at NIPiCON 2026 in Ooty, Tamil Nadu for insights into AI and ML in drug discovery. Hosted by JSS College of Pharmacy, March 2025.",
+    content: `NIPiCON 2026, India's premier conference on AI and Machine Learning-driven drug discovery, will take place at JSS College of Pharmacy, Ooty, Tamil Nadu on March 7th-8th, 2025. This international event will host leaders from both the pharmaceutical and tech industries, as well as top academic researchers.
 
 India has become a hotbed of pharmaceutical research, and this conference underscores the nation’s commitment to integrating cutting-edge AI and ML technologies in drug discovery. Participants will dive into key themes like machine learning models for predicting drug interactions, AI-powered screening, and the ethical frameworks for AI in healthcare.
 
-Tamil Nadu's rich academic and research culture further enhances the conference’s appeal. With a focus on fostering partnerships between Indian and global institutions, Pharmanecia 4.E aims to accelerate innovations that can transform drug discovery and medical treatments on a global scale.`,
+Tamil Nadu's rich academic and research culture further enhances the conference’s appeal. With a focus on fostering partnerships between Indian and global institutions, NIPiCON 2026 aims to accelerate innovations that can transform drug discovery and medical treatments on a global scale.`,
     imageUrl: "/blog5.avif",
     tags: [
       "AI",
@@ -668,7 +676,7 @@ Tamil Nadu's rich academic and research culture further enhances the conference�
       "Research Conference",
     ],
     metaDescription:
-      "Discover the latest AI and ML innovations in drug discovery at India's Pharmanecia 4.E conference, hosted by JSS College of Pharmacy, Tamil Nadu.",
+      "Discover the latest AI and ML innovations in drug discovery at India's NIPiCON 2026 conference, hosted by JSS College of Pharmacy, Tamil Nadu.",
     keywords: [
       "India AI conference",
       "drug discovery AI India",
@@ -680,14 +688,14 @@ Tamil Nadu's rich academic and research culture further enhances the conference�
   {
     id: "6",
     title:
-      "Advancing Drug Discovery with AI: Highlights from Pharmanecia 4.E, Ooty, Tamil Nadu",
+      "Advancing Drug Discovery with AI: Highlights from NIPiCON 2026, Ooty, Tamil Nadu",
     slug: "advancing-drug-discovery-ai-conference-tamil-nadu",
     date: "2024-09-30",
     author: "Dr. Kavitha Menon",
     authorRole: "Associate Professor, Department of Pharmaceutical Chemistry",
     excerpt:
-      "Pharmanecia 4.E, held at JSS College of Pharmacy in Ooty, Tamil Nadu, highlights how AI is transforming the pharmaceutical landscape.",
-    content: `Artificial Intelligence and Machine Learning have the potential to revolutionize how drugs are discovered and developed, and nowhere is this more evident than at the Pharmanecia 4.E International Conference in Ooty, Tamil Nadu. Taking place on March 7th and 8th, 2025, this event will showcase groundbreaking research at the nexus of AI, ML, and pharmaceutical sciences.
+      "NIPiCON 2026, held at JSS College of Pharmacy in Ooty, Tamil Nadu, highlights how AI is transforming the pharmaceutical landscape.",
+    content: `Artificial Intelligence and Machine Learning have the potential to revolutionize how drugs are discovered and developed, and nowhere is this more evident than at the NIPiCON 2026 International Conference in Ooty, Tamil Nadu. Taking place on March 7th and 8th, 2025, this event will showcase groundbreaking research at the nexus of AI, ML, and pharmaceutical sciences.
 
 This two-day conference will offer insights into AI's role in drug discovery, from predicting drug-target interactions to applying machine learning in lead optimization. Hosted by JSS College of Pharmacy, Ooty, and supported by the Operant Pharmacy Federation, the event is a vital forum for exploring the future of pharmaceutical research.
 
@@ -703,7 +711,7 @@ In addition to thought-provoking talks, the conference will feature a range of n
       "Conference",
     ],
     metaDescription:
-      "Attend the Pharmanecia 4.E International Research Conference on AI and ML in drug discovery, hosted in Ooty, Tamil Nadu, India.",
+      "Attend the NIPiCON 2026 International Research Conference on AI and ML in drug discovery, hosted in Ooty, Tamil Nadu, India.",
     keywords: [
       "AI drug discovery India",
       "conference Tamil Nadu",

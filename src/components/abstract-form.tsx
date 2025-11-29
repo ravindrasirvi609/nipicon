@@ -1,7 +1,7 @@
 "use client";
 
 import { useFirebaseStorage } from "@/app/hooks/useFirebaseStorage";
-import { designationOptions, indianStates, subjectOptions } from "@/data";
+import { designationOptions, indianStates, tracks } from "@/data";
 import axios from "axios";
 import { useState, ChangeEvent, useCallback } from "react";
 import { useDropzone } from "react-dropzone";
@@ -19,7 +19,17 @@ interface Errors {
   city?: string;
   state?: string;
   pincode?: string;
-  articleType?: string;
+  paperType?: string;
+  presentationType?: string;
+  declaration?: string;
+  supervisorName?: string;
+  supervisorDesignation?: string;
+  supervisorAffiliation?: string;
+  supervisorAddress?: string;
+  supervisorEmail?: string;
+  supervisorContact?: string;
+  declarationForm?: string;
+  briefProfile?: string;
 }
 
 export function AbstractForm() {
@@ -46,8 +56,24 @@ export function AbstractForm() {
   const [errors, setErrors] = useState<Errors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState("");
-  const [articleType, setArticleType] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+
+  // New Fields
+  const [paperType, setPaperType] = useState("");
+  const [presentationType, setPresentationType] = useState("");
+  const [isForeignDelegate, setIsForeignDelegate] = useState(false);
+  const [declarationAccepted, setDeclarationAccepted] = useState(false);
+
+  // Pharma Innovator Award
+  const [isPharmaInnovatorAward, setIsPharmaInnovatorAward] = useState(false);
+  const [supervisorName, setSupervisorName] = useState("");
+  const [supervisorDesignation, setSupervisorDesignation] = useState("");
+  const [supervisorAffiliation, setSupervisorAffiliation] = useState("");
+  const [supervisorAddress, setSupervisorAddress] = useState("");
+  const [supervisorEmail, setSupervisorEmail] = useState("");
+  const [supervisorContact, setSupervisorContact] = useState("");
+  const [declarationForm, setDeclarationForm] = useState<File | null>(null);
+  const [briefProfile, setBriefProfile] = useState<File | null>(null);
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
     if (acceptedFiles[0]) {
@@ -62,6 +88,24 @@ export function AbstractForm() {
       "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
         [".docx"],
     },
+    multiple: false,
+  });
+
+  const {
+    getRootProps: getDeclarationRootProps,
+    getInputProps: getDeclarationInputProps,
+  } = useDropzone({
+    onDrop: (acceptedFiles) => setDeclarationForm(acceptedFiles[0]),
+    accept: { "application/pdf": [] },
+    multiple: false,
+  });
+
+  const {
+    getRootProps: getProfileRootProps,
+    getInputProps: getProfileInputProps,
+  } = useDropzone({
+    onDrop: (acceptedFiles) => setBriefProfile(acceptedFiles[0]),
+    accept: { "application/pdf": [] },
     multiple: false,
   });
 
@@ -90,14 +134,20 @@ export function AbstractForm() {
     if (!title) {
       newErrors.title = "Title is required";
     }
-    if (!subject) {
-      newErrors.subject = "Subject is required";
+    if (!subject && !isPharmaInnovatorAward) {
+      newErrors.subject = "Paper Track is required";
     }
-    if (!articleType) {
-      newErrors.articleType = "Article Type is required";
+    if (!presentationType) {
+      newErrors.presentationType = "Presentation Type is required";
+    }
+    if (!paperType) {
+      newErrors.paperType = "Paper Type is required";
     }
     if (!abstractFile) {
       newErrors.abstractFile = "Abstract file is required";
+    }
+    if (!declarationAccepted) {
+      newErrors.declaration = "You must accept the declaration";
     } else if (abstractFile.size > 5 * 1024 * 1024) {
       newErrors.abstractFile = "Abstract file must be less than 5 MB";
     } else if (
@@ -122,6 +172,25 @@ export function AbstractForm() {
     } else if (!/^\d{6}$/.test(pincode)) {
       newErrors.pincode = "Invalid pincode format";
     }
+
+    if (isPharmaInnovatorAward) {
+      if (!supervisorName)
+        newErrors.supervisorName = "Supervisor Name is required";
+      if (!supervisorDesignation)
+        newErrors.supervisorDesignation = "Supervisor Designation is required";
+      if (!supervisorAffiliation)
+        newErrors.supervisorAffiliation = "Supervisor Affiliation is required";
+      if (!supervisorAddress)
+        newErrors.supervisorAddress = "Supervisor Address is required";
+      if (!supervisorEmail)
+        newErrors.supervisorEmail = "Supervisor Email is required";
+      if (!supervisorContact)
+        newErrors.supervisorContact = "Supervisor Contact is required";
+      if (!declarationForm)
+        newErrors.declarationForm = "Declaration Form is required";
+      if (!briefProfile) newErrors.briefProfile = "Brief Profile is required";
+    }
+
     setErrors(newErrors);
 
     if (Object.keys(newErrors).length === 0) {
@@ -147,7 +216,33 @@ export function AbstractForm() {
       formData.append("city", city);
       formData.append("state", state);
       formData.append("pincode", pincode);
-      formData.append("articleType", articleType);
+
+      // Paper Details
+      formData.append("paperType", paperType);
+      formData.append("presentationType", presentationType);
+      formData.append("isForeignDelegate", isForeignDelegate.toString());
+      formData.append("declarationAccepted", declarationAccepted.toString());
+      formData.append(
+        "isPharmaInnovatorAward",
+        isPharmaInnovatorAward.toString()
+      );
+
+      if (isPharmaInnovatorAward) {
+        formData.append("supervisorName", supervisorName);
+        formData.append("supervisorDesignation", supervisorDesignation);
+        formData.append("supervisorAffiliation", supervisorAffiliation);
+        formData.append("supervisorAddress", supervisorAddress);
+        formData.append("supervisorEmail", supervisorEmail);
+        formData.append("supervisorContact", supervisorContact);
+        if (declarationForm) {
+          const url = await uploadFile(declarationForm);
+          formData.append("declarationFormUrl", url);
+        }
+        if (briefProfile) {
+          const url = await uploadFile(briefProfile);
+          formData.append("briefProfileUrl", url);
+        }
+      }
 
       try {
         const response = await axios.post("/api/submitAbstract", formData, {
@@ -257,6 +352,53 @@ export function AbstractForm() {
           </div>
         </div>
 
+        <div className="mb-6">
+          <label className="flex items-center space-x-2">
+            <input
+              type="checkbox"
+              checked={isPharmaInnovatorAward}
+              onChange={(e) => setIsPharmaInnovatorAward(e.target.checked)}
+              className="form-checkbox h-5 w-5 text-indigo-600"
+            />
+            <span className="text-indigo-900 font-semibold">
+              Apply for Pharma Innovator Award
+            </span>
+          </label>
+          <p className="text-sm text-gray-600 mt-1 ml-7">
+            Note: You can apply either for "Pharma Innovator Award" or "Any one
+            Track out of Five".
+          </p>
+        </div>
+
+        {!isPharmaInnovatorAward && (
+          <div>
+            <label
+              htmlFor="subject"
+              className="block text-sm font-medium text-[#022873] mb-1"
+            >
+              Paper Track
+            </label>
+            <select
+              id="subject"
+              className="w-full px-3 py-2 border border-[#CACACA] text-black rounded-md focus:outline-none focus:ring-2 focus:ring-[#034C8C]"
+              value={subject}
+              onChange={(e: ChangeEvent<HTMLSelectElement>) =>
+                setSubject(e.target.value)
+              }
+            >
+              <option value="">Select a Track</option>
+              {tracks.map((option) => (
+                <option key={option} value={option}>
+                  {option}
+                </option>
+              ))}
+            </select>
+            {errors.subject && (
+              <p className="text-[#D94814] text-sm mt-1">{errors.subject}</p>
+            )}
+          </div>
+        )}
+
         <div>
           <label
             htmlFor="name"
@@ -345,51 +487,58 @@ export function AbstractForm() {
           />
         </div>
 
-        <div>
-          <label
-            htmlFor="subject"
-            className="block text-sm font-medium text-[#022873] mb-1"
-          >
-            Select Presentation Subject
-          </label>
-          <select
-            id="subject"
-            className="w-full px-3 py-2 border text-black border-[#CACACA] rounded-md focus:outline-none focus:ring-2 focus:ring-[#034C8C]"
-            value={subject}
-            onChange={(e) => setSubject(e.target.value)}
-          >
-            <option value="">Select a subject</option>
-            {subjectOptions.map((option) => (
-              <option key={option.value} value={option.value}>
-                {option.label}
-              </option>
-            ))}
-          </select>
-          {errors.subject && (
-            <p className="text-[#D94814] text-sm mt-1">{errors.subject}</p>
-          )}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label className="block text-sm font-medium text-[#022873] mb-1">
+              Presentation Type
+            </label>
+            <select
+              className="w-full px-3 py-2 border border-[#CACACA] text-black rounded-md focus:outline-none focus:ring-2 focus:ring-[#034C8C]"
+              value={presentationType}
+              onChange={(e) => setPresentationType(e.target.value)}
+            >
+              <option value="">Select Type</option>
+              <option value="Poster">Poster</option>
+              <option value="Oral">Oral</option>
+            </select>
+            {errors.presentationType && (
+              <p className="text-[#D94814] text-sm mt-1">
+                {errors.presentationType}
+              </p>
+            )}
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-[#022873] mb-1">
+              Paper Type
+            </label>
+            <select
+              className="w-full px-3 py-2 border border-[#CACACA] text-black rounded-md focus:outline-none focus:ring-2 focus:ring-[#034C8C]"
+              value={paperType}
+              onChange={(e) => setPaperType(e.target.value)}
+            >
+              <option value="">Select Type</option>
+              <option value="Review">Review</option>
+              <option value="Research">Research</option>
+            </select>
+            {errors.paperType && (
+              <p className="text-[#D94814] text-sm mt-1">{errors.paperType}</p>
+            )}
+          </div>
         </div>
 
         <div>
-          <label
-            htmlFor="articleType"
-            className="block text-sm font-medium text-[#022873] mb-1"
-          >
-            Article Type
+          <label className="block text-sm font-medium text-[#022873] mb-1">
+            Are you Foreign Delegate for Online Oral Presentation?
           </label>
           <select
-            id="articleType"
             className="w-full px-3 py-2 border border-[#CACACA] text-black rounded-md focus:outline-none focus:ring-2 focus:ring-[#034C8C]"
-            value={articleType}
-            onChange={(e) => setArticleType(e.target.value)}
+            value={isForeignDelegate ? "Yes" : "No"}
+            onChange={(e) => setIsForeignDelegate(e.target.value === "Yes")}
           >
-            <option value="">Select a Article Types</option>
-            <option value="reviewArticle">Review Article</option>
-            <option value="researchArticle">Research Article</option>
+            <option value="No">No</option>
+            <option value="Yes">Yes</option>
           </select>
-          {errors.articleType && (
-            <p className="text-[#D94814] text-sm mt-1">{errors.articleType}</p>
-          )}
         </div>
 
         <div>
@@ -397,13 +546,13 @@ export function AbstractForm() {
             htmlFor="title"
             className="block text-sm font-medium text-[#022873] mb-1"
           >
-            Title of Abstract
+            Title of Paper (Short Statement)
           </label>
           <input
             id="title"
             type="text"
             className="w-full px-3 py-2 border text-black border-[#CACACA] rounded-md focus:outline-none focus:ring-2 focus:ring-[#034C8C]"
-            placeholder="Enter the title of your abstract"
+            placeholder="Enter abstract title"
             value={title}
             onChange={(e: ChangeEvent<HTMLInputElement>) =>
               setTitle(e.target.value)
@@ -600,6 +749,174 @@ export function AbstractForm() {
             {submitError}
           </div>
         )}
+
+        {isPharmaInnovatorAward && (
+          <div className="border-t pt-6 mt-6">
+            <h3 className="text-xl font-bold text-indigo-900 mb-4">
+              Supervisor Details
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-[#022873] mb-1">
+                  Name
+                </label>
+                <input
+                  type="text"
+                  className="w-full px-3 py-2 border border-[#CACACA] rounded-md"
+                  value={supervisorName}
+                  onChange={(e) => setSupervisorName(e.target.value)}
+                />
+                {errors.supervisorName && (
+                  <p className="text-red-500 text-xs mt-1">
+                    {errors.supervisorName}
+                  </p>
+                )}
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-[#022873] mb-1">
+                  Designation
+                </label>
+                <input
+                  type="text"
+                  className="w-full px-3 py-2 border border-[#CACACA] rounded-md"
+                  value={supervisorDesignation}
+                  onChange={(e) => setSupervisorDesignation(e.target.value)}
+                />
+                {errors.supervisorDesignation && (
+                  <p className="text-red-500 text-xs mt-1">
+                    {errors.supervisorDesignation}
+                  </p>
+                )}
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-[#022873] mb-1">
+                  Affiliation
+                </label>
+                <input
+                  type="text"
+                  className="w-full px-3 py-2 border border-[#CACACA] rounded-md"
+                  value={supervisorAffiliation}
+                  onChange={(e) => setSupervisorAffiliation(e.target.value)}
+                />
+                {errors.supervisorAffiliation && (
+                  <p className="text-red-500 text-xs mt-1">
+                    {errors.supervisorAffiliation}
+                  </p>
+                )}
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-[#022873] mb-1">
+                  Postal Address
+                </label>
+                <input
+                  type="text"
+                  className="w-full px-3 py-2 border border-[#CACACA] rounded-md"
+                  value={supervisorAddress}
+                  onChange={(e) => setSupervisorAddress(e.target.value)}
+                />
+                {errors.supervisorAddress && (
+                  <p className="text-red-500 text-xs mt-1">
+                    {errors.supervisorAddress}
+                  </p>
+                )}
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-[#022873] mb-1">
+                  Email Address
+                </label>
+                <input
+                  type="email"
+                  className="w-full px-3 py-2 border border-[#CACACA] rounded-md"
+                  value={supervisorEmail}
+                  onChange={(e) => setSupervisorEmail(e.target.value)}
+                />
+                {errors.supervisorEmail && (
+                  <p className="text-red-500 text-xs mt-1">
+                    {errors.supervisorEmail}
+                  </p>
+                )}
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-[#022873] mb-1">
+                  Contact Number
+                </label>
+                <input
+                  type="tel"
+                  className="w-full px-3 py-2 border border-[#CACACA] rounded-md"
+                  value={supervisorContact}
+                  onChange={(e) => setSupervisorContact(e.target.value)}
+                />
+                {errors.supervisorContact && (
+                  <p className="text-red-500 text-xs mt-1">
+                    {errors.supervisorContact}
+                  </p>
+                )}
+              </div>
+            </div>
+
+            <div className="mt-4">
+              <label className="block text-sm font-medium text-[#022873] mb-1">
+                Upload Declaration Form
+              </label>
+              <div
+                {...getDeclarationRootProps()}
+                className="border-2 border-dashed rounded-lg p-4 text-center cursor-pointer border-gray-300 hover:border-indigo-500"
+              >
+                <input {...getDeclarationInputProps()} />
+                {declarationForm ? (
+                  <p className="text-green-600">{declarationForm.name}</p>
+                ) : (
+                  <p className="text-gray-500">Upload Declaration Form (PDF)</p>
+                )}
+              </div>
+              {errors.declarationForm && (
+                <p className="text-red-500 text-xs mt-1">
+                  {errors.declarationForm}
+                </p>
+              )}
+            </div>
+
+            <div className="mt-4">
+              <label className="block text-sm font-medium text-[#022873] mb-1">
+                Upload Brief Profile (CV, Research Output, etc.)
+              </label>
+              <div
+                {...getProfileRootProps()}
+                className="border-2 border-dashed rounded-lg p-4 text-center cursor-pointer border-gray-300 hover:border-indigo-500"
+              >
+                <input {...getProfileInputProps()} />
+                {briefProfile ? (
+                  <p className="text-green-600">{briefProfile.name}</p>
+                ) : (
+                  <p className="text-gray-500">Upload Brief Profile (PDF)</p>
+                )}
+              </div>
+              {errors.briefProfile && (
+                <p className="text-red-500 text-xs mt-1">
+                  {errors.briefProfile}
+                </p>
+              )}
+            </div>
+          </div>
+        )}
+
+        <div className="mb-6 mt-6">
+          <label className="flex items-center space-x-2">
+            <input
+              type="checkbox"
+              checked={declarationAccepted}
+              onChange={(e) => setDeclarationAccepted(e.target.checked)}
+              className="form-checkbox h-5 w-5 text-indigo-600"
+            />
+            <span className="text-gray-700">
+              I hereby declare that this is my original work and it is not
+              plagiarised.
+            </span>
+          </label>
+          {errors.declaration && (
+            <p className="text-[#D94814] text-sm mt-1">{errors.declaration}</p>
+          )}
+        </div>
 
         <button
           type="submit"

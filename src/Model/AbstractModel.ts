@@ -8,7 +8,8 @@ const abstractSchema = new Schema({
   coAuthor: { type: String },
   designation: { type: String },
   title: { type: String },
-  subject: { type: String },
+  subject: { type: String }, // Paper Track
+  paperType: { type: String, enum: ["Review", "Research"] },
   abstractFileUrl: { type: String },
   address: { type: String },
   city: { type: String },
@@ -21,12 +22,24 @@ const abstractSchema = new Schema({
   Status: { type: String, default: "InReview" },
   registrationCompleted: { type: Boolean, default: false },
   registrationCode: { type: String },
-  articleType: { type: String },
   presentationType: {
     type: String,
-    enum: ["Oral", "E-Poster"],
+    enum: ["Oral", "Poster"],
     default: null,
   },
+  isForeignDelegate: { type: Boolean, default: false },
+  declarationAccepted: { type: Boolean, default: false },
+
+  // Pharma Innovator Award Fields
+  isPharmaInnovatorAward: { type: Boolean, default: false },
+  supervisorName: { type: String },
+  supervisorDesignation: { type: String },
+  supervisorAffiliation: { type: String },
+  supervisorAddress: { type: String },
+  supervisorEmail: { type: String },
+  supervisorContact: { type: String },
+  declarationFormUrl: { type: String },
+  briefProfileUrl: { type: String },
 
   presentationFileUrl: { type: String },
   presentationFileStatus: { type: String, default: "Pending" },

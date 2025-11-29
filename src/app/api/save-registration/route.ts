@@ -19,6 +19,8 @@ export async function POST(req: NextRequest) {
       email,
       whatsappNumber,
       name,
+      firstName,
+      lastName,
       affiliation,
       designation,
       imageUrl,
@@ -28,6 +30,9 @@ export async function POST(req: NextRequest) {
       pincode,
       country,
       registrationType,
+      applyingAs,
+      registeringAs,
+      idCardUrl,
       abstractSubmitted,
       abstractId,
       needAccommodation,
@@ -35,6 +40,12 @@ export async function POST(req: NextRequest) {
       specialAssistance,
       includeGalaDinner,
       memberId,
+      paymentAmount,
+      transactionId,
+      bankName,
+      branchName,
+      paymentDate,
+      paymentProofUrl,
     } = body;
 
     const newRegistration = new RegistrationModel({
@@ -46,6 +57,8 @@ export async function POST(req: NextRequest) {
       email,
       whatsappNumber,
       name,
+      firstName,
+      lastName,
       affiliation,
       designation,
       imageUrl,
@@ -55,6 +68,9 @@ export async function POST(req: NextRequest) {
       pincode,
       country,
       registrationType,
+      applyingAs,
+      registeringAs,
+      idCardUrl,
       abstractSubmitted,
       abstractId,
       needAccommodation,
@@ -62,6 +78,13 @@ export async function POST(req: NextRequest) {
       specialAssistance,
       includeGalaDinner,
       memberId,
+      paymentAmount,
+      transactionId,
+      bankName,
+      branchName,
+      paymentDate,
+      paymentProofUrl,
+      paymentStatus: "Pending", // Payment will be confirmed by admin
     });
 
     const savedRegistration = await newRegistration.save();

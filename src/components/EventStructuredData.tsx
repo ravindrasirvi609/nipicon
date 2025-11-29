@@ -5,7 +5,7 @@ const EventStructuredData = () => {
   const structuredData = {
     "@context": "https://schema.org",
     "@type": "Event",
-    name: "Pharmanecia 4.E International Research Conference",
+    name: "NIPiCON 2026 International Research Conference",
     description:
       "Recent Advances in Artificial Intelligence and Machine learning driven drug discovery",
     startDate: "2025-03-07",

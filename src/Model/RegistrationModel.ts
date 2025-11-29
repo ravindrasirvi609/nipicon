@@ -8,7 +8,9 @@ const registrationSchema = new Schema({
     type: String,
   },
   Salutations: { type: String, enum: ["Mr.", "Ms.", "Mrs.", "Dr.", "Prof."] },
-  name: { type: String, required: true },
+  firstName: { type: String },
+  lastName: { type: String },
+  name: { type: String, required: true }, // Full Name for Certificate
   affiliation: { type: String },
   designation: { type: String },
   imageUrl: { type: String },
@@ -29,6 +31,9 @@ const registrationSchema = new Schema({
   registrationType: {
     type: String,
   },
+  applyingAs: { type: String, enum: ["Individual", "Group"] },
+  registeringAs: { type: String, enum: ["Delegate", "Delegate as Presenter"] },
+  idCardUrl: { type: String }, // For Student categories
 
   abstractSubmitted: { type: Boolean, default: false },
   abstractId: { type: Schema.Types.ObjectId, ref: "Abstract" },
@@ -42,6 +47,10 @@ const registrationSchema = new Schema({
   paymentAmount: { type: Number },
   paymentDate: { type: Date },
   transactionId: { type: String },
+  bankName: { type: String },
+  branchName: { type: String },
+  utrNumber: { type: String },
+  paymentProofUrl: { type: String },
   memberId: { type: String },
   feesReceiptUrl: { type: String },
 

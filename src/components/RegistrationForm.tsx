@@ -31,6 +31,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
     uploadProgress,
     isUploading,
     error: uploadError,
+    uploadFile,
   } = useFirebaseStorage();
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [abstractError, setAbstractError] = useState("");
@@ -104,22 +105,65 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
     [onImageUpload]
   );
 
+  const handlePaymentProofUpload = async (file: File) => {
+    try {
+      const url = await uploadFile(file);
+      onInputChange({
+        target: { name: "paymentProofUrl", value: url },
+      } as any);
+    } catch (error) {
+      console.error("Failed to upload payment proof:", error);
+      alert("Failed to upload payment proof. Please try again.");
+    }
+  };
+
+  const handleIdCardUpload = async (file: File) => {
+    try {
+      const url = await uploadFile(file);
+      onInputChange({
+        target: { name: "idCardUrl", value: url },
+      } as any);
+    } catch (error) {
+      console.error("Failed to upload ID card:", error);
+      alert("Failed to upload ID card. Please try again.");
+    }
+  };
+
+  const {
+    getRootProps: getPaymentProofRootProps,
+    getInputProps: getPaymentProofInputProps,
+  } = useDropzone({
+    onDrop: (acceptedFiles) => handlePaymentProofUpload(acceptedFiles[0]),
+    accept: { "image/*": [], "application/pdf": [] },
+    multiple: false,
+  });
+
+  const {
+    getRootProps: getIdCardRootProps,
+    getInputProps: getIdCardInputProps,
+  } = useDropzone({
+    onDrop: (acceptedFiles) => handleIdCardUpload(acceptedFiles[0]),
+    accept: { "image/*": [], "application/pdf": [] },
+    multiple: false,
+  });
+
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
-    onDrop,
-    accept: {
-      "image/*": [".jpeg", ".jpg", ".png"],
-    },
-    maxFiles: 1,
+    onDrop: (acceptedFiles) => onImageUpload(acceptedFiles[0]),
+    accept: { "image/*": [] },
     multiple: false,
   });
 
   return (
     <form className="max-w-2xl mx-auto">
-      <h3 className="text-2xl font-semibold mb-4">Registration Form</h3>
+      <h3 className="text-2xl font-semibold mb-4 text-indigo-900">
+        Registration Form
+      </h3>
 
       {/* Image Uploader */}
       <div className="mb-6">
-        <label className="block mb-2">Profile Picture</label>
+        <label className="block mb-2 text-gray-800 font-medium">
+          Profile Picture
+        </label>
         <div
           {...getRootProps()}
           className={`border-2 border-dashed rounded-lg p-6 text-center cursor-pointer transition-colors ${
@@ -174,7 +218,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
 
       {/* Abstract Submission */}
       <div className="mb-6">
-        <label className="flex items-center mb-2">
+        <label className="flex items-center mb-2 text-gray-800 font-medium">
           <input
             type="checkbox"
             checked={abstractSubmitted}
@@ -212,7 +256,9 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
 
       {selectedPlanName === "OPF/OBRF Members" && (
         <div className="mb-4">
-          <label className="block mb-2">OPF/OBRF Member Id</label>
+          <label className="block mb-2 text-gray-800 font-medium">
+            OPF/OBRF Member Id
+          </label>
           <input
             type="text"
             name="memberId"
@@ -233,7 +279,9 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
 
       {/* Personal Information */}
       <div className="mb-4">
-        <label className="block mb-2">Salutation</label>
+        <label className="block mb-2 text-gray-800 font-medium">
+          Salutation
+        </label>
         <select
           name="Salutations"
           value={formData.Salutations}
@@ -249,15 +297,46 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
         </select>
       </div>
 
+      <div className="grid grid-cols-2 gap-4 mb-4">
+        <div>
+          <label className="block mb-2 text-gray-800 font-medium">
+            First Name
+          </label>
+          <input
+            type="text"
+            name="firstName"
+            value={formData.firstName}
+            onChange={onInputChange}
+            required
+            className="w-full p-2 border rounded text-gray-900"
+          />
+        </div>
+        <div>
+          <label className="block mb-2 text-gray-800 font-medium">
+            Last Name
+          </label>
+          <input
+            type="text"
+            name="lastName"
+            value={formData.lastName}
+            onChange={onInputChange}
+            required
+            className="w-full p-2 border rounded"
+          />
+        </div>
+      </div>
+
       <div className="mb-4">
-        <label className="block mb-2">Full Name</label>
+        <label className="block mb-2 text-gray-800 font-medium">
+          Full Name (for Certificate)
+        </label>
         <input
           type="text"
           name="name"
           value={formData.name}
           onChange={onInputChange}
           required
-          className="w-full p-2 border rounded"
+          className="w-full p-2 border rounded text-gray-900"
         />
         {errors.name && (
           <p className="text-red-600 text-sm mt-1">{errors.name}</p>
@@ -269,14 +348,71 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
       </div>
 
       <div className="mb-4">
-        <label className="block mb-2">Email</label>
+        <label className="block mb-2 text-gray-800 font-medium">
+          Applying as
+        </label>
+        <select
+          name="applyingAs"
+          value={formData.applyingAs}
+          onChange={onInputChange}
+          required
+          className="w-full p-2 border rounded text-gray-900"
+        >
+          <option value="Individual">Individual</option>
+          <option value="Group">Group</option>
+        </select>
+      </div>
+
+      <div className="mb-4">
+        <label className="block mb-2 text-gray-800 font-medium">
+          Registering as
+        </label>
+        <select
+          name="registeringAs"
+          value={formData.registeringAs}
+          onChange={onInputChange}
+          required
+          className="w-full p-2 border rounded text-gray-900"
+        >
+          <option value="Delegate">Delegate (without Presentation)</option>
+          <option value="Delegate as Presenter">
+            Delegate as Presenter (First Author only)
+          </option>
+        </select>
+      </div>
+
+      {(selectedPlanName?.includes("Student") ||
+        selectedPlanName?.includes("UG") ||
+        selectedPlanName?.includes("PG")) && (
+        <div className="mb-6">
+          <label className="block mb-2 text-gray-800 font-medium">
+            Upload ID Card or Letter from Institute
+          </label>
+          <div
+            {...getIdCardRootProps()}
+            className="border-2 border-dashed rounded-lg p-6 text-center cursor-pointer transition-colors border-gray-300 hover:border-amber-500"
+          >
+            <input {...getIdCardInputProps()} />
+            {formData.idCardUrl ? (
+              <p className="text-green-600">ID Card Uploaded Successfully</p>
+            ) : (
+              <p className="text-gray-600">
+                Drag & drop ID card here, or click to select
+              </p>
+            )}
+          </div>
+        </div>
+      )}
+
+      <div className="mb-4">
+        <label className="block mb-2 text-gray-800 font-medium">Email</label>
         <input
           type="email"
           name="email"
           value={formData.email}
           onChange={onInputChange}
           required
-          className="w-full p-2 border rounded"
+          className="w-full p-2 border rounded text-gray-900"
         />
         {errors.email && (
           <p className="text-red-600 text-sm mt-1">{errors.email}</p>
@@ -284,14 +420,16 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
       </div>
 
       <div className="mb-4">
-        <label className="block mb-2">WhatsApp Number</label>
+        <label className="block mb-2 text-gray-800 font-medium">
+          WhatsApp Number
+        </label>
         <input
           type="tel"
           name="whatsappNumber"
           value={formData.whatsappNumber}
           onChange={onInputChange}
           required
-          className="w-full p-2 border rounded"
+          className="w-full p-2 border rounded text-gray-900"
           maxLength={10}
         />
         {errors.whatsappNumber && (
@@ -300,13 +438,13 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
       </div>
 
       <div className="mb-4">
-        <label className="block mb-2">Gender</label>
+        <label className="block mb-2 text-gray-800 font-medium">Gender</label>
         <select
           name="gender"
           value={formData.gender}
           onChange={onInputChange}
           required
-          className="w-full p-2 border rounded"
+          className="w-full p-2 border rounded text-gray-900"
         >
           <option value="Male">Male</option>
           <option value="Female">Female</option>
@@ -318,14 +456,16 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
       </div>
 
       <div className="mb-4">
-        <label className="block mb-2">Date of Birth</label>
+        <label className="block mb-2 text-gray-800 font-medium">
+          Date of Birth
+        </label>
         <input
           type="date"
           name="dob"
           value={formData.dob}
           onChange={onInputChange}
           required
-          className="w-full p-2 border rounded"
+          className="w-full p-2 border rounded text-gray-900"
         />
         {errors.dob && (
           <p className="text-red-600 text-sm mt-1">{errors.dob}</p>
@@ -337,7 +477,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
       </div>
 
       <div className="mb-6">
-        <label className="flex items-center mb-2">
+        <label className="flex items-center mb-2 text-gray-800 font-medium">
           <input
             type="checkbox"
             name="includeGalaDinner"
@@ -351,13 +491,15 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
       </div>
 
       <div className="mb-4">
-        <label className="block mb-2">Aadhar Number</label>
+        <label className="block mb-2 text-gray-800 font-medium">
+          Aadhar Number
+        </label>
         <input
           type="text"
           name="AadharNumber"
           value={formData.AadharNumber}
           onChange={onInputChange}
-          className="w-full p-2 border rounded"
+          className="w-full p-2 border rounded text-gray-900"
           maxLength={12}
         />
         {errors.AadharNumber && (
@@ -371,7 +513,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
       </div>
 
       <div className="mb-4">
-        <label className="block mb-2">
+        <label className="block mb-2 text-gray-800 font-medium">
           Affiliation/Organization/Institution
         </label>
         <input
@@ -379,7 +521,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
           name="affiliation"
           value={formData.affiliation}
           onChange={onInputChange}
-          className="w-full p-2 border rounded"
+          className="w-full p-2 border rounded text-gray-900"
         />
         {errors.affiliation && (
           <p className="text-red-600 text-sm mt-1">{errors.affiliation}</p>
@@ -387,13 +529,15 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
       </div>
 
       <div className="mb-4">
-        <label className="block mb-2">Designation</label>
+        <label className="block mb-2 text-gray-800 font-medium">
+          Designation
+        </label>
         <input
           type="text"
           name="designation"
           value={formData.designation}
           onChange={onInputChange}
-          className="w-full p-2 border rounded"
+          className="w-full p-2 border rounded text-gray-900"
         />
         {errors.designation && (
           <p className="text-red-600 text-sm mt-1">{errors.designation}</p>
@@ -402,14 +546,14 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
 
       {/* Address Information */}
       <div className="mb-4">
-        <label className="block mb-2">Address</label>
+        <label className="block mb-2 text-gray-800 font-medium">Address</label>
         <input
           type="text"
           name="address"
           value={formData.address}
           onChange={onInputChange}
           required
-          className="w-full p-2 border rounded"
+          className="w-full p-2 border rounded text-gray-900"
         />
         {errors.address && (
           <p className="text-red-600 text-sm mt-1">{errors.address}</p>
@@ -417,14 +561,14 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
       </div>
 
       <div className="mb-4">
-        <label className="block mb-2">City</label>
+        <label className="block mb-2 text-gray-800 font-medium">City</label>
         <input
           type="text"
           name="city"
           value={formData.city}
           onChange={onInputChange}
           required
-          className="w-full p-2 border rounded"
+          className="w-full p-2 border rounded text-gray-900"
         />
         {errors.city && (
           <p className="text-red-600 text-sm mt-1">{errors.city}</p>
@@ -432,13 +576,13 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
       </div>
 
       <div className="mb-4">
-        <label className="block mb-2">State</label>
+        <label className="block mb-2 text-gray-800 font-medium">State</label>
         <select
           name="state"
           value={formData.state}
           onChange={onInputChange}
           required
-          className="w-full p-2 border rounded"
+          className="w-full p-2 border rounded text-gray-900"
         >
           <option value="" disabled>
             Select your state
@@ -455,14 +599,14 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
       </div>
 
       <div className="mb-4">
-        <label className="block mb-2">Pincode</label>
+        <label className="block mb-2 text-gray-800 font-medium">Pincode</label>
         <input
           type="text"
           name="pincode"
           value={formData.pincode}
           onChange={onInputChange}
           required
-          className="w-full p-2 border rounded"
+          className="w-full p-2 border rounded text-gray-900"
           maxLength={6}
         />
         {errors.pincode && (
@@ -471,14 +615,14 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
       </div>
 
       <div className="mb-4">
-        <label className="block mb-2">Country</label>
+        <label className="block mb-2 text-gray-800 font-medium">Country</label>
         <input
           type="text"
           name="country"
           value={formData.country}
           onChange={onInputChange}
           required
-          className="w-full p-2 border rounded"
+          className="w-full p-2 border rounded text-gray-900"
         />
         {errors.country && (
           <p className="text-red-600 text-sm mt-1">{errors.country}</p>
@@ -486,7 +630,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
       </div>
 
       <div className="mb-4">
-        <label className="flex items-center">
+        <label className="flex items-center text-gray-800 font-medium">
           <input
             type="checkbox"
             name="needAccommodation"
@@ -496,6 +640,139 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
           />
           Need Accommodation
         </label>
+      </div>
+
+      {/* Payment Details Section */}
+      <div className="mt-8 border-t pt-6">
+        <h3 className="text-xl font-bold mb-4 text-indigo-900">
+          Payment Details
+        </h3>
+
+        <div className="bg-gray-50 p-4 rounded-lg mb-6 border border-gray-200">
+          <h4 className="font-semibold mb-2 text-indigo-800">
+            Account Details for Registration Fees Payment:
+          </h4>
+          <div className="text-sm text-gray-700 space-y-1">
+            <p>
+              <span className="font-medium">Account Name:</span> Institute of
+              Pharmacy, Nirma University
+            </p>
+            <p>
+              <span className="font-medium">Bank Name:</span> The Kalupur
+              Commercial Co-Operative Bank Ltd.
+            </p>
+            <p>
+              <span className="font-medium">Branch Name:</span> Nirma
+              University, Nirma University Campus, S.G. Highway, Ahmedabad
+            </p>
+            <p>
+              <span className="font-medium">Bank Account No.:</span> 09720180112
+            </p>
+            <p>
+              <span className="font-medium">IFSC CODE:</span> KCCB0NRM097
+            </p>
+            <p>
+              <span className="font-medium">MICR Code No.:</span> 380126029
+            </p>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="mb-4">
+            <label className="block mb-2 text-gray-800 font-medium">
+              Amount Paid
+            </label>
+            <input
+              type="number"
+              name="paymentAmount"
+              value={formData.paymentAmount || ""}
+              onChange={onInputChange}
+              required
+              className="w-full p-2 border rounded text-gray-900"
+              placeholder="Enter amount"
+            />
+          </div>
+
+          <div className="mb-4">
+            <label className="block mb-2 text-gray-800 font-medium">
+              Transaction UTR / Ref No.
+            </label>
+            <input
+              type="text"
+              name="transactionId"
+              value={formData.transactionId}
+              onChange={onInputChange}
+              required
+              className="w-full p-2 border rounded text-gray-900"
+              placeholder="Enter UTR number"
+            />
+          </div>
+
+          <div className="mb-4">
+            <label className="block mb-2 text-gray-800 font-medium">
+              Name of Bank
+            </label>
+            <input
+              type="text"
+              name="bankName"
+              value={formData.bankName}
+              onChange={onInputChange}
+              required
+              className="w-full p-2 border rounded text-gray-900"
+              placeholder="Your bank name"
+            />
+          </div>
+
+          <div className="mb-4">
+            <label className="block mb-2 text-gray-800 font-medium">
+              Name of Branch
+            </label>
+            <input
+              type="text"
+              name="branchName"
+              value={formData.branchName}
+              onChange={onInputChange}
+              required
+              className="w-full p-2 border rounded text-gray-900"
+              placeholder="Your bank branch"
+            />
+          </div>
+
+          <div className="mb-4">
+            <label className="block mb-2 text-gray-800 font-medium">
+              Date of Payment
+            </label>
+            <input
+              type="date"
+              name="paymentDate"
+              value={formData.paymentDate}
+              onChange={onInputChange}
+              required
+              className="w-full p-2 border rounded text-gray-900"
+            />
+          </div>
+        </div>
+
+        <div className="mb-6">
+          <label className="block mb-2 text-gray-800 font-medium">
+            Upload Proof of Online Transaction
+          </label>
+          <div
+            {...getPaymentProofRootProps()}
+            className="border-2 border-dashed rounded-lg p-6 text-center cursor-pointer transition-colors border-gray-300 hover:border-amber-500"
+          >
+            <input {...getPaymentProofInputProps()} />
+            {formData.paymentProofUrl ? (
+              <p className="text-green-600">
+                Payment Proof Uploaded Successfully
+              </p>
+            ) : (
+              <p className="text-gray-600">
+                Drag & drop payment proof here, or click to select
+              </p>
+            )}
+          </div>
+        </div>
       </div>
     </form>
   );

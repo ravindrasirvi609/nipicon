@@ -2,7 +2,9 @@ export interface RegistrationFormData {
   email: string;
   whatsappNumber: string;
   Salutations: "Mr." | "Ms." | "Mrs." | "Dr." | "Prof.";
-  name: string;
+  firstName: string;
+  lastName: string;
+  name: string; // Full Name for Certificate
   affiliation: string;
   designation: string;
   gender: "Male" | "Female" | "Other";
@@ -17,12 +19,23 @@ export interface RegistrationFormData {
   institute: string;
   memberId: string;
   registrationType: string;
+  applyingAs: "Individual" | "Group";
+  registeringAs: "Delegate" | "Delegate as Presenter";
+  idCardUrl?: string;
   abstractSubmitted: boolean;
   needAccommodation: boolean;
   dietaryRequirements: string;
   specialAssistance: string;
   abstractId: string | null;
   includeGalaDinner: boolean;
+
+  // Payment Details
+  paymentAmount: number;
+  transactionId: string; // UTR
+  bankName: string;
+  branchName: string;
+  paymentDate: string;
+  paymentProofUrl: string;
 }
 
 export interface RegistrationInfo {
