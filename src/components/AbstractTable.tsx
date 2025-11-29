@@ -1,9 +1,9 @@
 import React, { useState, useCallback } from "react";
 import Link from "next/link";
-import { Eye, Download, MoreVertical } from "lucide-react";
+import { Eye, Download, MoreVertical, Award, Globe } from "lucide-react";
 import FileViewerModal from "./FileViewerModal";
 import RejectPopup from "./RejectPopup";
-import { designationOptions } from "@/data";
+import { designationOptions, tracks, getTrackCode } from "@/data";
 import { Abstract } from "@/lib/excelExport";
 
 interface Filters {
@@ -84,6 +84,30 @@ const AbstractTable: React.FC<AbstractTableProps> = ({
       (option) => option.value === value
     );
     return designation ? designation.label : "Unknown Designation";
+  }, []);
+
+  // Get track label from value or label
+  const getTrackLabel = useCallback((subject: string) => {
+    const track = tracks.find(
+      (t) =>
+        t.value === subject ||
+        t.label.toLowerCase().includes(subject?.toLowerCase())
+    );
+    return track?.label || subject || "Not Specified";
+  }, []);
+
+  // Get track color based on code
+  const getTrackColor = useCallback((subject: string) => {
+    const code = getTrackCode(subject);
+    const colors: Record<string, string> = {
+      A: "bg-blue-100 text-blue-800 border-blue-300",
+      B: "bg-green-100 text-green-800 border-green-300",
+      C: "bg-purple-100 text-purple-800 border-purple-300",
+      D: "bg-orange-100 text-orange-800 border-orange-300",
+      E: "bg-pink-100 text-pink-800 border-pink-300",
+      PIA: "bg-yellow-100 text-yellow-800 border-yellow-300",
+    };
+    return colors[code] || "bg-gray-100 text-gray-800 border-gray-300";
   }, []);
 
   const handleStatusUpdateClick = useCallback(
@@ -229,50 +253,110 @@ const AbstractTable: React.FC<AbstractTableProps> = ({
       <table className="min-w-full bg-white shadow-md rounded-lg overflow-hidden">
         <thead>
           <tr className="bg-blue-900 text-white uppercase text-sm leading-normal">
-            <th className="py-3 px-6 text-left">Subject</th>
-            <th className="py-3 px-6 text-left">Author</th>
-            <th className="py-3 px-6 text-left">Email</th>
-            <th className="py-3 px-6 text-left">Temporary Abstract Code</th>
-            <th className="py-3 px-6 text-left">Final Abstract Code</th>
-            <th className="py-3 px-6 text-left">Designation</th>
-            <th className="py-3 px-6 text-left">Article Type</th>
-            <th className="py-3 px-6 text-left">Registration Status</th>
-            <th className="py-3 px-6 text-left">Registration Code</th>
-            <th className="py-3 px-6 text-left">Abstract Status</th>
-            <th className="py-3 px-6 text-left">Presentation Status</th>
-            <th className="py-3 px-6 text-left">Abstract Actions</th>
-            <th className="py-3 px-6 text-left">Presentation Actions</th>
+            <th className="py-3 px-4 text-left">Track</th>
+            <th className="py-3 px-4 text-left">Author</th>
+            <th className="py-3 px-4 text-left">Email</th>
+            <th className="py-3 px-4 text-left">Title</th>
+            <th className="py-3 px-4 text-left">Temp Code</th>
+            <th className="py-3 px-4 text-left">Final Code</th>
+            <th className="py-3 px-4 text-left">Paper Type</th>
+            <th className="py-3 px-4 text-left">Pres. Type</th>
+            <th className="py-3 px-4 text-left">Special</th>
+            <th className="py-3 px-4 text-left">Regn Status</th>
+            <th className="py-3 px-4 text-left">Regn Code</th>
+            <th className="py-3 px-4 text-left">Abstract Status</th>
+            <th className="py-3 px-4 text-left">Pres. Status</th>
+            <th className="py-3 px-4 text-left">Abstract Actions</th>
+            <th className="py-3 px-4 text-left">Pres. Actions</th>
           </tr>
         </thead>
         <tbody className="text-gray-600 text-sm font-light">
           {filteredAbstracts.map((abstract) => (
             <tr
               key={abstract._id}
-              className="border-b border-gray-200 hover:bg-gray-100"
+              className={`border-b border-gray-200 hover:bg-gray-100 ${
+                abstract.isPharmaInnovatorAward ? "bg-yellow-50" : ""
+              }`}
             >
-              <td className="py-3 px-6 text-left whitespace-nowrap">
-                {abstract.subject}
+              <td className="py-3 px-4 text-left">
+                <span
+                  className={`px-2 py-1 rounded text-xs font-medium border ${getTrackColor(abstract.subject)}`}
+                >
+                  {getTrackCode(abstract.subject)} -{" "}
+                  {abstract.subject?.split(".")[0] || "N/A"}
+                </span>
               </td>
-              <td className="py-3 px-6 text-left">
+              <td className="py-3 px-4 text-left">
                 <Link
                   href={`/abstractForm/${abstract._id}`}
-                  className="text-blue-600 hover:text-blue-800"
+                  className="text-blue-600 hover:text-blue-800 font-medium"
                 >
                   {abstract.name}
                 </Link>
+                <div className="text-xs text-gray-500">
+                  {abstract.affiliation}
+                </div>
               </td>
-              <td className="py-3 px-6 text-left">{abstract.email}</td>
-              <td className="py-3 px-6 text-left">
+              <td className="py-3 px-4 text-left text-xs">{abstract.email}</td>
+              <td className="py-3 px-4 text-left">
+                <div className="max-w-xs truncate" title={abstract.title}>
+                  {abstract.title}
+                </div>
+              </td>
+              <td className="py-3 px-4 text-left font-mono text-xs">
                 {abstract.temporyAbstractCode}
               </td>
-              <td className="py-3 px-6 text-left">{abstract.AbstractCode}</td>
-              <td className="py-3 px-6 text-left">
-                {getDesignationLabel(abstract.designation)}
+              <td className="py-3 px-4 text-left font-mono text-xs font-bold text-blue-600">
+                {abstract.AbstractCode || "-"}
               </td>
-              <td className="py-3 px-6 text-left">{abstract.articleType}</td>
-              <td className="py-3 px-6 text-left">
+              <td className="py-3 px-4 text-left">
                 <span
-                  className={`py-1 px-3 rounded-full text-xs ${
+                  className={`px-2 py-1 rounded text-xs ${
+                    abstract.articleType === "Research"
+                      ? "bg-blue-100 text-blue-800"
+                      : "bg-purple-100 text-purple-800"
+                  }`}
+                >
+                  {abstract.articleType || abstract.paperType || "-"}
+                </span>
+              </td>
+              <td className="py-3 px-4 text-left">
+                <span
+                  className={`px-2 py-1 rounded text-xs ${
+                    abstract.presentationType === "Oral"
+                      ? "bg-green-100 text-green-800"
+                      : "bg-orange-100 text-orange-800"
+                  }`}
+                >
+                  {abstract.presentationType || "Not Set"}
+                </span>
+              </td>
+              <td className="py-3 px-4 text-left">
+                <div className="flex space-x-1">
+                  {abstract.isPharmaInnovatorAward && (
+                    <span
+                      className="inline-flex items-center px-1 py-0.5 rounded text-xs bg-yellow-200 text-yellow-800"
+                      title="Pharma Innovator Award"
+                    >
+                      <Award size={12} className="mr-0.5" /> PIA
+                    </span>
+                  )}
+                  {abstract.isForeignDelegate && (
+                    <span
+                      className="inline-flex items-center px-1 py-0.5 rounded text-xs bg-indigo-200 text-indigo-800"
+                      title="Foreign Delegate"
+                    >
+                      <Globe size={12} className="mr-0.5" /> FD
+                    </span>
+                  )}
+                  {!abstract.isPharmaInnovatorAward &&
+                    !abstract.isForeignDelegate &&
+                    "-"}
+                </div>
+              </td>
+              <td className="py-3 px-4 text-left">
+                <span
+                  className={`py-1 px-2 rounded-full text-xs ${
                     abstract.registrationCompleted
                       ? "bg-green text-white"
                       : "bg-red text-white"
@@ -281,40 +365,40 @@ const AbstractTable: React.FC<AbstractTableProps> = ({
                   {abstract.registrationCompleted ? "Complete" : "Incomplete"}
                 </span>
               </td>
-              <td className="py-3 px-6 text-left">
+              <td className="py-3 px-4 text-left font-mono text-xs">
                 {abstract.registrationCode || "-"}
               </td>
-              <td className="py-3 px-6 text-left">
+              <td className="py-3 px-4 text-left">
                 <span
-                  className={`py-1 px-3 rounded-full text-xs ${
+                  className={`py-1 px-2 rounded-full text-xs ${
                     abstract.Status === "Accepted"
                       ? "bg-green text-white"
                       : abstract.Status === "Revision"
-                      ? "bg-red text-white"
-                      : abstract.Status === "InReview"
-                      ? "bg-blue-500 text-white"
-                      : "bg-yellow-200 text-yellow-800"
+                        ? "bg-red text-white"
+                        : abstract.Status === "InReview"
+                          ? "bg-blue-500 text-white"
+                          : "bg-yellow-200 text-yellow-800"
                   }`}
                 >
                   {abstract.Status}
                 </span>
               </td>
-              <td className="px-6 py-4 whitespace-nowrap">
+              <td className="px-4 py-4 whitespace-nowrap">
                 <span
                   className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
                     abstract.presentationFileStatus === "Approved"
                       ? "bg-green text-white"
                       : abstract.presentationFileStatus === "InReview"
-                      ? "bg-yellow-300 text-yellow-900"
-                      : abstract.presentationFileStatus === "Revision"
-                      ? "bg-red text-white"
-                      : "bg-gray-300 text-gray-800"
+                        ? "bg-yellow-300 text-yellow-900"
+                        : abstract.presentationFileStatus === "Revision"
+                          ? "bg-red text-white"
+                          : "bg-gray-300 text-gray-800"
                   }`}
                 >
                   {abstract.presentationFileStatus || "Not Uploaded"}
                 </span>
               </td>
-              <td className="py-3 px-6 text-center">
+              <td className="py-3 px-4 text-center">
                 <div className="flex item-center justify-center">
                   <button
                     onClick={() => handleDownload(abstract)}
@@ -334,7 +418,7 @@ const AbstractTable: React.FC<AbstractTableProps> = ({
                   </button>
                 </div>
               </td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+              <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-500">
                 {abstract.presentationFileUrl ? (
                   <div className="flex space-x-2">
                     <select
@@ -377,7 +461,7 @@ const AbstractTable: React.FC<AbstractTableProps> = ({
                     </a>
                   </div>
                 ) : (
-                  <span className="text-gray-400">No file uploaded</span>
+                  <span className="text-gray-400">No file</span>
                 )}
               </td>
             </tr>

@@ -388,8 +388,8 @@ export function AbstractForm() {
             >
               <option value="">Select a Track</option>
               {tracks.map((option) => (
-                <option key={option} value={option}>
-                  {option}
+                <option key={option.value} value={option.label}>
+                  {option.label}
                 </option>
               ))}
             </select>

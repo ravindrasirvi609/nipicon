@@ -240,7 +240,20 @@ export const sendEmail = async ({
       buttonUrl = submissionDetailsUrl;
     }
 
-    const emailHtml = render(
+    // Validate required fields before sending
+    if (!EMAIL || !subject || !content) {
+      throw new Error(
+        `Missing required email fields - to: ${EMAIL}, subject: ${subject}, content: ${!!content}`
+      );
+    }
+
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(EMAIL)) {
+      throw new Error(`Invalid email format: ${EMAIL}`);
+    }
+
+    const emailHtml = await render(
       <EmailTemplate
         content={content}
         subject={subject}
@@ -250,22 +263,26 @@ export const sendEmail = async ({
       />
     );
 
+    const emailPayload = {
+      from: "psc@pharmanecia.org",
+      to: EMAIL,
+      subject: subject,
+      html: emailHtml,
+    };
+
     const response = await fetch("https://api.resend.com/emails", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${apiKey}`,
       },
-      body: JSON.stringify({
-        from: "psc@pharmanecia.org",
-        to: EMAIL,
-        subject: subject,
-        html: emailHtml,
-      }),
+      body: JSON.stringify(emailPayload),
     });
 
     if (!response.ok) {
-      throw new Error(`Error sending email: ${response.status}`);
+      const errorBody = await response.text();
+      console.error("Resend API error:", response.status, errorBody);
+      throw new Error(`Error sending email: ${response.status} - ${errorBody}`);
     }
 
     return await response.json();

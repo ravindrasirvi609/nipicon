@@ -358,13 +358,135 @@ export const designationOptions = [
   },
 ];
 
+// Five Tracks for Abstract Submission
 export const tracks = [
+  {
+    value: "trackA",
+    label: "A. Next-Gen Formulations, Nanotechnology and Biotechnology",
+    code: "A",
+  },
+  {
+    value: "trackB",
+    label: "B. Pharmacology, Clinical Pharmacy & Patient Care",
+    code: "B",
+  },
+  {
+    value: "trackC",
+    label: "C. Pharmaceutical Analysis, Quality & Regulatory Science",
+    code: "C",
+  },
+  {
+    value: "trackD",
+    label: "D. Herbal Medicines & Natural Products",
+    code: "D",
+  },
+  {
+    value: "trackE",
+    label: "E. AI in Drug Discovery & Pharmaceutical Chemistry",
+    code: "E",
+  },
+  { value: "pharmaInnovator", label: "Pharma Innovator Award", code: "PIA" },
+];
+
+// Legacy tracks for backward compatibility
+export const trackLabels = [
   "A. Next-Gen Formulations, Nanotechnology and Biotechnology",
   "B. Pharmacology, Clinical Pharmacy & Patient Care",
   "C. Pharmaceutical Analysis, Quality & Regulatory Science",
   "D. Herbal Medicines & Natural Products",
   "E. AI in Drug Discovery & Pharmaceutical Chemistry",
 ];
+
+// Registration Categories with Codes
+export const registrationCategories = [
+  {
+    value: "ugPharmD",
+    label: "UG or PharmD Student",
+    code: "SU",
+    fee: 1500,
+    currency: "INR",
+  },
+  {
+    value: "pgPhd",
+    label: "PG or PhD Student",
+    code: "SP",
+    fee: 2500,
+    currency: "INR",
+  },
+  {
+    value: "academicians",
+    label: "Academicians",
+    code: "AF",
+    fee: 3000,
+    currency: "INR",
+  },
+  {
+    value: "industrial",
+    label: "Industrial Persons",
+    code: "IP",
+    fee: 4000,
+    currency: "INR",
+  },
+  {
+    value: "foreignDelegate",
+    label: "Foreign Delegates",
+    code: "FC",
+    fee: 200,
+    currency: "USD",
+  },
+  {
+    value: "foreignOnline",
+    label: "Foreign Presenter (Online)",
+    code: "FO",
+    fee: 100,
+    currency: "USD",
+  },
+  {
+    value: "accompanyingIndian",
+    label: "Accompanying Person (Indian)",
+    code: "AP",
+    fee: 1800,
+    currency: "INR",
+  },
+  {
+    value: "accompanyingForeign",
+    label: "Accompanying Person (Foreign)",
+    code: "AP",
+    fee: 50,
+    currency: "USD",
+  },
+];
+
+// Bank Account Details for Registration Fees Payment
+export const bankDetails = {
+  accountName: "Institute of Pharmacy, Nirma University",
+  bankName: "The Kalupur Commercial Co-Operative Bank Ltd.",
+  branchName:
+    "Nirma University, Nirma University Campus, S.G. Highway, Ahmedabad",
+  accountNo: "09720180112",
+  ifscCode: "KCCB0NRM097",
+  micrCode: "380126029",
+};
+
+// Helper function to get category code from registration type
+export const getCategoryCode = (registrationType: string): string => {
+  const category = registrationCategories.find(
+    (cat) =>
+      cat.label.toLowerCase() === registrationType?.toLowerCase() ||
+      cat.value === registrationType
+  );
+  return category?.code || "XX";
+};
+
+// Helper function to get track code from subject
+export const getTrackCode = (subject: string): string => {
+  const track = tracks.find(
+    (t) =>
+      t.label.toLowerCase().includes(subject?.toLowerCase()) ||
+      t.value === subject
+  );
+  return track?.code || "XX";
+};
 
 export const plans: Plan[] = [
   {

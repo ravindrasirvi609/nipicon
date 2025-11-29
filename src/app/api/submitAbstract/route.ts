@@ -3,7 +3,6 @@ import { NextRequest, NextResponse } from "next/server";
 import AbstractModel from "@/Model/AbstractModel";
 import RegistrationModel from "@/Model/RegistrationModel";
 import QRCode from "qrcode";
-import { sendEmail } from "@/lib/mailer";
 import { uploadQRCodeToFirebase } from "@/lib/firebase";
 
 connect();
@@ -164,10 +163,7 @@ export async function POST(req: NextRequest) {
       console.log(`No registration found for email: ${email}`);
     }
 
-    await sendEmail({
-      _id: newAbstract._id,
-      emailType: "SUBMITTED",
-    });
+    // TODO: Add email sending functionality
 
     return NextResponse.json({
       message: "Abstract submitted successfully",

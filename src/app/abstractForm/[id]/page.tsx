@@ -7,7 +7,7 @@ import { formatDate } from "@/lib/utils";
 import { RegistrationInfo } from "@/lib/interface";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { FaFileDownload, FaFileUpload } from "react-icons/fa";
+import { FaFileDownload } from "react-icons/fa";
 
 const AbstractForm: React.FC = () => {
   const params = useParams();

@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 import { connect } from "@/dbConfig/dbConfig";
-import { sendEmail } from "@/lib/mailer";
 import { uploadQRCodeToFirebase } from "@/lib/firebase";
 import QRCode from "qrcode";
 import RegistrationModel from "@/Model/RegistrationModel";
@@ -111,11 +110,7 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    // Send confirmation email
-    sendEmail({
-      emailType: "REGISTRATION_SUCCESS",
-      _id: updatedGroupRegistration._id,
-    });
+    // TODO: Add email sending functionality
 
     return NextResponse.json(
       {

@@ -56,10 +56,12 @@ const registrationSchema = new Schema({
   // Registration Status
   registrationStatus: {
     type: String,
-    enum: ["Pending", "Confirmed"],
+    enum: ["Pending", "Confirmed", "Rejected"],
     default: "Pending",
   },
   registrationCode: { type: String },
+  rejectionReason: { type: String },
+  includeGalaDinner: { type: Boolean, default: false },
 
   // Timestamps
   createdAt: { type: Date, default: Date.now },
