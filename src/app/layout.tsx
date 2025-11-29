@@ -1,7 +1,6 @@
 import { Inter } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/nav";
-import Footer from "@/components/Footer";
 import { cn } from "@/lib/utils";
 import { Analytics } from "@vercel/analytics/react";
 import { Suspense } from "react";
@@ -44,7 +43,6 @@ export default function RootLayout({
             {children}
             <Analytics />
           </div>
-          <Footer />
         </Suspense>
       </body>
     </html>
