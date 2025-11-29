@@ -1,4 +1,3 @@
-import InfiniteRibbon from "@/components/InfiniteRibbon";
 import RegistrationPlans from "@/components/RegistrationPlans";
 import Link from "next/link";
 import React from "react";
