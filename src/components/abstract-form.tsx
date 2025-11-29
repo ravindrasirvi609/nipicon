@@ -145,9 +145,6 @@ export function AbstractForm() {
     }
     if (!abstractFile) {
       newErrors.abstractFile = "Abstract file is required";
-    }
-    if (!declarationAccepted) {
-      newErrors.declaration = "You must accept the declaration";
     } else if (abstractFile.size > 5 * 1024 * 1024) {
       newErrors.abstractFile = "Abstract file must be less than 5 MB";
     } else if (
@@ -157,6 +154,9 @@ export function AbstractForm() {
       ].includes(abstractFile.type)
     ) {
       newErrors.abstractFile = "Only document files are allowed";
+    }
+    if (!declarationAccepted) {
+      newErrors.declaration = "You must accept the declaration";
     }
     if (!address) {
       newErrors.address = "Address is required";
