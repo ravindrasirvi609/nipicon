@@ -6,7 +6,7 @@ export function middleware(request: NextRequest) {
   const path = request.nextUrl.pathname;
 
   // Define protected routes
-  const protectedRoutes = ["/admin", "/dashboard"];
+  const protectedRoutes = ["/dashboard"];
 
   // Check if the path is a protected route
   const isProtectedRoute = protectedRoutes.some((route) =>

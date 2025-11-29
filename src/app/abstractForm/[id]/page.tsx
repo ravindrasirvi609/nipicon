@@ -5,7 +5,6 @@ import { useFirebaseStorage } from "@/app/hooks/useFirebaseStorage";
 import { useDropzone } from "react-dropzone";
 import { formatDate } from "@/lib/utils";
 import { RegistrationInfo } from "@/lib/interface";
-import IdCard from "@/components/idCard";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { FaFileDownload, FaFileUpload } from "react-icons/fa";
@@ -223,17 +222,6 @@ const AbstractForm: React.FC = () => {
                     "N/A"}
                 </p>
               </div>
-
-              {/* ID Card Section */}
-              <div className="mt-8">
-                {registration && (
-                  <IdCard
-                    name={registration.name ?? ""}
-                    imageUrl={registration?.imageUrl ?? ""}
-                    affiliation={registration.affiliation}
-                  />
-                )}
-              </div>
             </div>
 
             <div className="lg:w-2/3 p-6 backdrop-blur-lg bg-white/10">
@@ -247,10 +235,11 @@ const AbstractForm: React.FC = () => {
                       label="Status"
                       value={
                         <span
-                          className={`inline-block px-3 sm:px-4 py-1 sm:py-2 rounded-full text-xs sm:text-sm font-semibold ${abstract.Status === "Pending"
+                          className={`inline-block px-3 sm:px-4 py-1 sm:py-2 rounded-full text-xs sm:text-sm font-semibold ${
+                            abstract.Status === "Pending"
                               ? "bg-yellow-200 text-yellow-800"
                               : "bg-green text-white"
-                            }`}
+                          }`}
                         >
                           {abstract.Status}
                         </span>
@@ -333,40 +322,41 @@ const AbstractForm: React.FC = () => {
 
                   {(abstract.Status === "Revision" ||
                     abstract.Status === "Rejected") && (
-                      <div className="mt-8 backdrop-blur-md bg-white/30 rounded-xl p-6">
-                        <h3 className="text-xl font-bold mb-4 text-purple-700">
-                          Upload Abstract File
-                        </h3>
-                        <div
-                          {...getRootPropsAbstract()}
-                          className={`w-full p-6 border-2 border-dashed rounded-xl text-center cursor-pointer transition-all duration-300 ${isDragActiveAbstract
-                              ? "border-purple-500 bg-purple-50/50"
-                              : "border-gray-300 hover:border-purple-500 hover:bg-white/20"
-                            }`}
-                        >
-                          <input {...getInputPropsAbstract()} />
-                          <p className="text-gray-700">
-                            {isDragActiveAbstract
-                              ? "Drop the file here..."
-                              : "Drag & drop your abstract file here, or click to select"}
-                          </p>
-                        </div>
-
-                        {abstractFile && (
-                          <div className="mt-4 text-purple-700">
-                            Selected: {abstractFile.name}
-                          </div>
-                        )}
-
-                        <button
-                          onClick={handleFileUpload}
-                          disabled={!abstractFile || isUploading}
-                          className="mt-4 w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white py-3 px-6 rounded-xl hover:opacity-90 transition-all duration-300 disabled:opacity-50"
-                        >
-                          {isUploading ? "Uploading..." : "Upload Abstract"}
-                        </button>
+                    <div className="mt-8 backdrop-blur-md bg-white/30 rounded-xl p-6">
+                      <h3 className="text-xl font-bold mb-4 text-purple-700">
+                        Upload Abstract File
+                      </h3>
+                      <div
+                        {...getRootPropsAbstract()}
+                        className={`w-full p-6 border-2 border-dashed rounded-xl text-center cursor-pointer transition-all duration-300 ${
+                          isDragActiveAbstract
+                            ? "border-purple-500 bg-purple-50/50"
+                            : "border-gray-300 hover:border-purple-500 hover:bg-white/20"
+                        }`}
+                      >
+                        <input {...getInputPropsAbstract()} />
+                        <p className="text-gray-700">
+                          {isDragActiveAbstract
+                            ? "Drop the file here..."
+                            : "Drag & drop your abstract file here, or click to select"}
+                        </p>
                       </div>
-                    )}
+
+                      {abstractFile && (
+                        <div className="mt-4 text-purple-700">
+                          Selected: {abstractFile.name}
+                        </div>
+                      )}
+
+                      <button
+                        onClick={handleFileUpload}
+                        disabled={!abstractFile || isUploading}
+                        className="mt-4 w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white py-3 px-6 rounded-xl hover:opacity-90 transition-all duration-300 disabled:opacity-50"
+                      >
+                        {isUploading ? "Uploading..." : "Upload Abstract"}
+                      </button>
+                    </div>
+                  )}
 
                   {abstract.Status === "Accepted" &&
                     registration?.paymentStatus === "Completed" && (
@@ -377,16 +367,17 @@ const AbstractForm: React.FC = () => {
                           </span>
                           <p className="mt-1">
                             <span
-                              className={`px-3 py-1 rounded-full text-sm font-semibold ${!abstract.presentationFileStatus
+                              className={`px-3 py-1 rounded-full text-sm font-semibold ${
+                                !abstract.presentationFileStatus
                                   ? "bg-yellow-200 text-yellow-800"
                                   : abstract.presentationFileStatus ===
-                                    "InReview"
+                                      "InReview"
                                     ? "bg-blue-200 text-blue-800"
                                     : abstract.presentationFileStatus ===
-                                      "Approved"
+                                        "Approved"
                                       ? "bg-green text-white"
                                       : "bg-red text-white"
-                                }`}
+                              }`}
                             >
                               {abstract.presentationFileStatus ||
                                 "Not Uploaded"}
@@ -431,10 +422,11 @@ const AbstractForm: React.FC = () => {
                               </h3>
                               <div
                                 {...getRootPropsPpt()}
-                                className={`w-full p-6 border-2 border-dashed rounded-lg text-center cursor-pointer transition-colors duration-200 ease-in-out ${isDragActivePpt
+                                className={`w-full p-6 border-2 border-dashed rounded-lg text-center cursor-pointer transition-colors duration-200 ease-in-out ${
+                                  isDragActivePpt
                                     ? "border-danger bg-red-50"
                                     : "border-gray-300 hover:border-danger hover:bg-gray-50"
-                                  }`}
+                                }`}
                               >
                                 <input {...getInputPropsPpt()} />
                                 <p className="text-gray-700">
@@ -558,10 +550,6 @@ const AbstractForm: React.FC = () => {
                         registration.paymentDate &&
                         formatDate(registration.paymentDate)
                       }
-                    />
-                    <InfoItem
-                      label="Need Accommodation"
-                      value={registration.needAccommodation ? "Yes" : "No"}
                     />
 
                     <InfoItem label="Address" value={registration.address} />
