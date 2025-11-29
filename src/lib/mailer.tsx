@@ -1,6 +1,5 @@
 import { render } from "@react-email/render";
 import { Text } from "@react-email/components";
-import EmailTemplate from "./EmailTemplate";
 import AbstractModel from "@/Model/AbstractModel";
 import RegistrationModel from "@/Model/RegistrationModel";
 
@@ -253,30 +252,12 @@ export const sendEmail = async ({
       throw new Error(`Invalid email format: ${EMAIL}`);
     }
 
-    const emailHtml = await render(
-      <EmailTemplate
-        content={content}
-        subject={subject}
-        qrCodeUrl={abstract?.qrCodeUrl || registration?.qrCodeUrl}
-        buttonText={buttonText}
-        buttonUrl={buttonUrl}
-      />
-    );
-
-    const emailPayload = {
-      from: "psc@pharmanecia.org",
-      to: EMAIL,
-      subject: subject,
-      html: emailHtml,
-    };
-
     const response = await fetch("https://api.resend.com/emails", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${apiKey}`,
       },
-      body: JSON.stringify(emailPayload),
     });
 
     if (!response.ok) {
