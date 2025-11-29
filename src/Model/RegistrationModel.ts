@@ -53,12 +53,6 @@ const registrationSchema = new Schema({
   memberId: { type: String },
   feesReceiptUrl: { type: String },
 
-  // Additional Conference Options
-  needAccommodation: { type: Boolean, default: false },
-  dietaryRequirements: { type: String },
-  specialAssistance: { type: String },
-  includeGalaDinner: { type: Boolean, default: false },
-
   // Registration Status
   registrationStatus: {
     type: String,
