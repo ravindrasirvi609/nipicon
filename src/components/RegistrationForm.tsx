@@ -216,67 +216,6 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
         )}
       </div>
 
-      {/* Abstract Submission */}
-      <div className="mb-6">
-        <label className="flex items-center mb-2 text-gray-800 font-medium">
-          <input
-            type="checkbox"
-            checked={abstractSubmitted}
-            onChange={(e) => setAbstractSubmitted(e.target.checked)}
-            className="mr-2"
-          />
-          I have submitted an abstract
-        </label>
-        {abstractSubmitted && (
-          <div>
-            <input
-              type="text"
-              value={abstractCode}
-              onChange={(e) => setAbstractCode(e.target.value)}
-              placeholder="Enter your abstract code"
-              className="w-full p-2 border rounded mb-2"
-            />
-
-            <button
-              type="button"
-              onClick={handleAbstractSubmission}
-              disabled={isAbstractFetching}
-              className={`bg-amber-500 text-white px-4 py-2 rounded-md hover:bg-indigo-700 transition duration-300 ${
-                isAbstractFetching ? "opacity-50 cursor-not-allowed" : ""
-              }`}
-            >
-              {isAbstractFetching ? "Fetching..." : "Fetch Abstract Details"}
-            </button>
-            {abstractError && (
-              <p className="text-red-600 mt-2">{abstractError}</p>
-            )}
-          </div>
-        )}
-      </div>
-
-      {selectedPlanName === "OPF/OBRF Members" && (
-        <div className="mb-4">
-          <label className="block mb-2 text-gray-800 font-medium">
-            OPF/OBRF Member Id
-          </label>
-          <input
-            type="text"
-            name="memberId"
-            value={formData.memberId || ""}
-            onChange={onInputChange}
-            required
-            className="w-full p-2 border rounded"
-          />
-          <p className="text-sm text-gray-600 mt-1">
-            Enter Correct Membership No., Incorrect membership No is subjected
-            to Rejection of Registration & payment will be nonrefundable.
-          </p>
-          {errors.memberId && (
-            <p className="text-red-600 text-sm mt-1">{errors.memberId}</p>
-          )}
-        </div>
-      )}
-
       {/* Personal Information */}
       <div className="mb-4">
         <label className="block mb-2 text-gray-800 font-medium">
