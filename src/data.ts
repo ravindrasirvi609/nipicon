@@ -356,6 +356,10 @@ export const designationOptions = [
     value: "FD",
     label: "Faculty",
   },
+  {
+    value: "IP",
+    label: "Industry personnel",
+  },
 ];
 
 // Five Tracks for Abstract Submission

@@ -18,6 +18,7 @@ interface Errors {
   address?: string;
   city?: string;
   state?: string;
+  country?: string;
   pincode?: string;
   paperType?: string;
   presentationType?: string;
@@ -52,6 +53,7 @@ export function AbstractForm() {
   const [address, setAddress] = useState("");
   const [city, setCity] = useState("");
   const [state, setState] = useState("");
+  const [country, setCountry] = useState("");
   const [pincode, setPincode] = useState("");
   const [errors, setErrors] = useState<Errors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -137,7 +139,7 @@ export function AbstractForm() {
     if (!subject && !isPharmaInnovatorAward) {
       newErrors.subject = "Paper Track is required";
     }
-    if (!presentationType) {
+    if (!presentationType && !isPharmaInnovatorAward) {
       newErrors.presentationType = "Presentation Type is required";
     }
     if (!paperType) {
@@ -166,6 +168,9 @@ export function AbstractForm() {
     }
     if (!state) {
       newErrors.state = "State is required";
+    }
+    if (isForeignDelegate && !country) {
+      newErrors.country = "Country is required";
     }
     if (!pincode) {
       newErrors.pincode = "Pincode is required";
@@ -215,11 +220,17 @@ export function AbstractForm() {
       formData.append("address", address);
       formData.append("city", city);
       formData.append("state", state);
+      if (isForeignDelegate) {
+        formData.append("country", country);
+      }
       formData.append("pincode", pincode);
 
       // Paper Details
       formData.append("paperType", paperType);
-      formData.append("presentationType", presentationType);
+      formData.append(
+        "presentationType",
+        isPharmaInnovatorAward ? "Oral" : presentationType
+      );
       formData.append("isForeignDelegate", isForeignDelegate.toString());
       formData.append("declarationAccepted", declarationAccepted.toString());
       formData.append(
@@ -358,7 +369,14 @@ export function AbstractForm() {
             <input
               type="checkbox"
               checked={isPharmaInnovatorAward}
-              onChange={(e) => setIsPharmaInnovatorAward(e.target.checked)}
+              onChange={(e) => {
+                setIsPharmaInnovatorAward(e.target.checked);
+                if (e.target.checked) {
+                  setPresentationType("Oral");
+                } else {
+                  setPresentationType("");
+                }
+              }}
               className="w-5 h-5 text-indigo-600 rounded focus:ring-indigo-500 border-gray-300"
             />
             <span className="text-indigo-900 dark:text-indigo-300 font-bold text-lg">
@@ -474,23 +492,25 @@ export function AbstractForm() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div>
-            <label className={labelClasses}>Presentation Type</label>
-            <select
-              className={inputClasses}
-              value={presentationType}
-              onChange={(e) => setPresentationType(e.target.value)}
-            >
-              <option value="">Select Type</option>
-              <option value="Poster">Poster</option>
-              <option value="Oral">Oral</option>
-            </select>
-            {errors.presentationType && (
-              <p className="text-red-500 text-sm mt-1">
-                {errors.presentationType}
-              </p>
-            )}
-          </div>
+          {!isPharmaInnovatorAward && (
+            <div>
+              <label className={labelClasses}>Presentation Type</label>
+              <select
+                className={inputClasses}
+                value={presentationType}
+                onChange={(e) => setPresentationType(e.target.value)}
+              >
+                <option value="">Select Type</option>
+                <option value="Poster">Poster</option>
+                <option value="Oral">Oral</option>
+              </select>
+              {errors.presentationType && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.presentationType}
+                </p>
+              )}
+            </div>
+          )}
 
           <div>
             <label className={labelClasses}>Paper Type</label>
@@ -500,7 +520,11 @@ export function AbstractForm() {
               onChange={(e) => setPaperType(e.target.value)}
             >
               <option value="">Select Type</option>
-              <option value="Review">Review</option>
+              {isPharmaInnovatorAward ? (
+                <option value="Concept">Concept</option>
+              ) : (
+                <option value="Review">Review</option>
+              )}
               <option value="Research">Research</option>
             </select>
             {errors.paperType && (
@@ -522,6 +546,27 @@ export function AbstractForm() {
             <option value="Yes">Yes</option>
           </select>
         </div>
+
+        {isForeignDelegate && (
+          <div>
+            <label htmlFor="country" className={labelClasses}>
+              Country
+            </label>
+            <input
+              id="country"
+              type="text"
+              className={inputClasses}
+              placeholder="Enter your country"
+              value={country}
+              onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                setCountry(e.target.value)
+              }
+            />
+            {errors.country && (
+              <p className="text-red-500 text-sm mt-1">{errors.country}</p>
+            )}
+          </div>
+        )}
 
         <div>
           <label htmlFor="title" className={labelClasses}>
@@ -548,11 +593,10 @@ export function AbstractForm() {
           </label>
           <div
             {...getRootProps()}
-            className={`w-full p-8 border-2 border-dashed rounded-xl text-center cursor-pointer transition-all duration-300 ${
-              isDragActive
-                ? "border-indigo-500 bg-indigo-50 dark:bg-indigo-900/20"
-                : "border-slate-300 dark:border-slate-600 hover:border-indigo-500 dark:hover:border-indigo-400 hover:bg-slate-50 dark:hover:bg-slate-800"
-            }`}
+            className={`w-full p-8 border-2 border-dashed rounded-xl text-center cursor-pointer transition-all duration-300 ${isDragActive
+              ? "border-indigo-500 bg-indigo-50 dark:bg-indigo-900/20"
+              : "border-slate-300 dark:border-slate-600 hover:border-indigo-500 dark:hover:border-indigo-400 hover:bg-slate-50 dark:hover:bg-slate-800"
+              }`}
           >
             <input {...getInputProps()} id="abstractFile" />
             <div className="flex flex-col items-center gap-3">
@@ -681,22 +725,35 @@ export function AbstractForm() {
             <label htmlFor="state" className={labelClasses}>
               State
             </label>
-            <select
-              name="state"
-              value={state}
-              onChange={(e) => setState(e.target.value)}
-              required
-              className={inputClasses}
-            >
-              <option value="" disabled>
-                Select your state
-              </option>
-              {indianStates.map((state) => (
-                <option key={state} value={state}>
-                  {state}
+            {isForeignDelegate ? (
+              <input
+                id="state"
+                type="text"
+                className={inputClasses}
+                placeholder="Enter your state"
+                value={state}
+                onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                  setState(e.target.value)
+                }
+              />
+            ) : (
+              <select
+                name="state"
+                value={state}
+                onChange={(e) => setState(e.target.value)}
+                required
+                className={inputClasses}
+              >
+                <option value="" disabled>
+                  Select your state
                 </option>
-              ))}
-            </select>
+                {indianStates.map((state) => (
+                  <option key={state} value={state}>
+                    {state}
+                  </option>
+                ))}
+              </select>
+            )}
             {errors.state && (
               <p className="text-red-500 text-sm mt-1">{errors.state}</p>
             )}
@@ -836,11 +893,10 @@ export function AbstractForm() {
               <label className={labelClasses}>Upload Declaration Form</label>
               <div
                 {...getDeclarationRootProps()}
-                className={`border-2 border-dashed rounded-xl p-6 text-center cursor-pointer transition-all duration-300 ${
-                  declarationForm
-                    ? "border-green-500 bg-green-50/50 dark:bg-green-900/20"
-                    : "border-slate-300 dark:border-slate-600 hover:border-indigo-500 dark:hover:border-indigo-400 hover:bg-slate-50 dark:hover:bg-slate-800"
-                }`}
+                className={`border-2 border-dashed rounded-xl p-6 text-center cursor-pointer transition-all duration-300 ${declarationForm
+                  ? "border-green-500 bg-green-50/50 dark:bg-green-900/20"
+                  : "border-slate-300 dark:border-slate-600 hover:border-indigo-500 dark:hover:border-indigo-400 hover:bg-slate-50 dark:hover:bg-slate-800"
+                  }`}
               >
                 <input {...getDeclarationInputProps()} />
                 {declarationForm ? (
@@ -894,11 +950,10 @@ export function AbstractForm() {
               </label>
               <div
                 {...getProfileRootProps()}
-                className={`border-2 border-dashed rounded-xl p-6 text-center cursor-pointer transition-all duration-300 ${
-                  briefProfile
-                    ? "border-green-500 bg-green-50/50 dark:bg-green-900/20"
-                    : "border-slate-300 dark:border-slate-600 hover:border-indigo-500 dark:hover:border-indigo-400 hover:bg-slate-50 dark:hover:bg-slate-800"
-                }`}
+                className={`border-2 border-dashed rounded-xl p-6 text-center cursor-pointer transition-all duration-300 ${briefProfile
+                  ? "border-green-500 bg-green-50/50 dark:bg-green-900/20"
+                  : "border-slate-300 dark:border-slate-600 hover:border-indigo-500 dark:hover:border-indigo-400 hover:bg-slate-50 dark:hover:bg-slate-800"
+                  }`}
               >
                 <input {...getProfileInputProps()} />
                 {briefProfile ? (
@@ -971,11 +1026,10 @@ export function AbstractForm() {
 
         <button
           type="submit"
-          className={`w-full font-bold py-4 px-6 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 ${
-            isSubmitting || isLoading
-              ? "bg-slate-400 cursor-not-allowed"
-              : "bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white"
-          }`}
+          className={`w-full font-bold py-4 px-6 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 ${isSubmitting || isLoading
+            ? "bg-slate-400 cursor-not-allowed"
+            : "bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white"
+            }`}
           disabled={isSubmitting || isLoading}
         >
           {isSubmitting || isLoading ? (
