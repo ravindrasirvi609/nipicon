@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 
-const ALLOWED_USERS = [{ username: "user", password: "user_password" }];
+const ALLOWED_USERS = [
+  { username: "user", password: "user_password" },
+  { username: "admin", password: "admin123" },
+];
 
 export async function POST(request: NextRequest) {
   const body = await request.json();

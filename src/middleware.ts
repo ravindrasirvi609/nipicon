@@ -6,7 +6,7 @@ export function middleware(request: NextRequest) {
   const path = request.nextUrl.pathname;
 
   // Define protected routes
-  const protectedRoutes = ["/dashboard"];
+  const protectedRoutes = ["/dashboard", "/admin"];
 
   // Check if the path is a protected route
   const isProtectedRoute = protectedRoutes.some((route) =>
@@ -19,7 +19,9 @@ export function middleware(request: NextRequest) {
 
   if (isProtectedRoute && !isAuthenticated) {
     // Redirect to login page if not authenticated
-    return NextResponse.redirect(new URL("/login", request.url));
+    const loginUrl = new URL("/login", request.url);
+    loginUrl.searchParams.set("callbackUrl", path);
+    return NextResponse.redirect(loginUrl);
   }
 
   return NextResponse.next();

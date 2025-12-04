@@ -24,7 +24,9 @@ export default function LoginPage() {
       });
 
       if (response.ok) {
-        router.push("/dashboard");
+        const searchParams = new URLSearchParams(window.location.search);
+        const callbackUrl = searchParams.get("callbackUrl");
+        router.push(callbackUrl || "/dashboard");
       } else {
         const data = await response.json();
         setErrorMessage(data.message || "Login failed");
