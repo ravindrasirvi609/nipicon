@@ -2,9 +2,9 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/nav";
 import { cn } from "@/lib/utils";
-import { Analytics } from "@vercel/analytics/react";
 import { Suspense } from "react";
 import LoadingExample from "@/components/Loader";
+import { Analytics } from "@vercel/analytics/next"
 
 const fontHeading = Inter({
   subsets: ["latin"],
