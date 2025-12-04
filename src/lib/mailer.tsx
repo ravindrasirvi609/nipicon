@@ -150,9 +150,18 @@ export const sendEmail = async ({
       content = (
         <>
           <Text>Dear {registration.name},</Text>
-          <Text>
-            Your registration has been received. Our team will verify the details and confirm your registration shortly.
-          </Text>
+          {registration.registrationStatus === "Confirmed" ||
+            registration.paymentStatus === "Completed" ? (
+            <Text>
+              We are pleased to inform you that your registration for the
+              conference has been successfully confirmed.
+            </Text>
+          ) : (
+            <Text>
+              Your registration has been received. Our team will verify the
+              details and confirm your registration shortly.
+            </Text>
+          )}
           <Text>Your registration details:</Text>
           <ul>
             <li>

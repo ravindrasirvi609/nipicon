@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { connect } from "@/dbConfig/dbConfig";
 import RegistrationModel from "@/Model/RegistrationModel";
 import { getCategoryCode } from "@/data";
+import { sendEmail } from "@/lib/mailer";
 
 connect();
 
@@ -65,7 +66,16 @@ export async function PATCH(request: NextRequest) {
 
       await registration.save();
 
-      // TODO: Add email sending functionality
+      // Send confirmation email
+      try {
+        await sendEmail({
+          _id: registration._id.toString(),
+          emailType: "REGISTRATION_SUCCESS",
+        });
+      } catch (emailError) {
+        console.error("Failed to send registration confirmation email:", emailError);
+        // Don't fail the request if email fails, but log it
+      }
 
       return NextResponse.json({
         success: true,
