@@ -4,6 +4,7 @@ import AbstractModel from "@/Model/AbstractModel";
 import RegistrationModel from "@/Model/RegistrationModel";
 import { NextRequest, NextResponse } from "next/server";
 import QRCode from "qrcode";
+import { sendEmail } from "@/lib/mailer";
 
 connect();
 
@@ -109,6 +110,17 @@ export async function POST(req: NextRequest) {
       registrationUpdate,
       { new: true }
     );
+
+    // Send confirmation email
+    try {
+      await sendEmail({
+        _id: savedRegistration._id.toString(),
+        emailType: "REGISTRATION_SUCCESS",
+      });
+    } catch (emailError) {
+      console.error("Failed to send registration email:", emailError);
+      // Don't fail the request if email fails, but log it
+    }
 
     return NextResponse.json(
       {

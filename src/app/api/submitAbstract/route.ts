@@ -4,6 +4,7 @@ import AbstractModel from "@/Model/AbstractModel";
 import RegistrationModel from "@/Model/RegistrationModel";
 import QRCode from "qrcode";
 import { uploadQRCodeToFirebase } from "@/lib/firebase";
+import { sendEmail } from "@/lib/mailer";
 
 connect();
 
@@ -163,7 +164,16 @@ export async function POST(req: NextRequest) {
       console.log(`No registration found for email: ${email}`);
     }
 
-    // TODO: Add email sending functionality
+    // Send confirmation email
+    try {
+      await sendEmail({
+        _id: newAbstract._id.toString(),
+        emailType: "SUBMITTED",
+      });
+    } catch (emailError) {
+      console.error("Failed to send abstract submission email:", emailError);
+      // Don't fail the request if email fails, but log it
+    }
 
     return NextResponse.json({
       message: "Abstract submitted successfully",

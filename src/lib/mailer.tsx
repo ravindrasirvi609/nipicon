@@ -72,6 +72,9 @@ export const sendEmail = async ({
             abstract code is: <strong>{abstract.temporyAbstractCode}</strong>
           </Text>
           <Text>
+            Our team will verify your submission and provide confirmation shortly.
+          </Text>
+          <Text>
             If you need to make any changes or have any questions, please
             don&apos;t hesitate to contact us.
           </Text>
@@ -148,8 +151,7 @@ export const sendEmail = async ({
         <>
           <Text>Dear {registration.name},</Text>
           <Text>
-            We are pleased to inform you that your registration for the
-            conference has been successfully completed.
+            Your registration has been received. Our team will verify the details and confirm your registration shortly.
           </Text>
           <Text>Your registration details:</Text>
           <ul>
@@ -162,7 +164,7 @@ export const sendEmail = async ({
               <strong>{registration.registrationType}</strong>
             </li>
             <li>
-              Payment Status: <strong>Completed</strong>
+              Payment Status: <strong>{registration.paymentStatus}</strong>
             </li>
           </ul>
           <Text>
@@ -252,12 +254,20 @@ export const sendEmail = async ({
       throw new Error(`Invalid email format: ${EMAIL}`);
     }
 
+    const emailHtml = await render(content);
+
     const response = await fetch("https://api.resend.com/emails", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${apiKey}`,
       },
+      body: JSON.stringify({
+        from: "NIPiCON <dev@ravindrachoudhary.in>",
+        to: [EMAIL],
+        subject: subject,
+        html: emailHtml,
+      }),
     });
 
     if (!response.ok) {
@@ -270,8 +280,7 @@ export const sendEmail = async ({
   } catch (error) {
     console.error("Error sending email:", error);
     throw new Error(
-      `Failed to send email: ${
-        error instanceof Error ? error.message : String(error)
+      `Failed to send email: ${error instanceof Error ? error.message : String(error)
       }`
     );
   }
