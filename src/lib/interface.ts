@@ -93,6 +93,17 @@ export interface RegistrationInfo {
     presentationType?: string;
     articleType?: string;
     feesReceiptUrl?: string;
+    bankName?: string;
+    branchName?: string;
+    utrNumber?: string;
+    paymentProofUrl?: string;
+    memberId?: string;
+    rejectionReason?: string;
+    includeGalaDinner?: boolean;
+    idCardUrl?: string;
+    groupCode?: string;
+    applyingAs?: string;
+    registeringAs?: string;
   };
 }
 
