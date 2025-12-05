@@ -72,11 +72,20 @@ export const sendEmail = async ({
             abstract code is: <strong>{abstract.temporyAbstractCode}</strong>
           </Text>
           <Text>
-            Our team will verify your submission and provide confirmation shortly.
+            Our team will verify your submission and provide confirmation
+            shortly.
           </Text>
           <Text>
             If you need to make any changes or have any questions, please
             don&apos;t hesitate to contact us.
+          </Text>
+          <Text>
+            You can view your submission details here:{" "}
+            <a href={submissionDetailsUrl}>{submissionDetailsUrl}</a>
+          </Text>
+          <Text>
+            You will receive an email notification whenever there is an update
+            to your abstract status.
           </Text>
         </>
       );
@@ -141,6 +150,14 @@ export const sendEmail = async ({
             If you have any questions about this update, please contact our
             support team.
           </Text>
+          <Text>
+            You can view your submission details here:{" "}
+            <a href={submissionDetailsUrl}>{submissionDetailsUrl}</a>
+          </Text>
+          <Text>
+            You will receive an email notification whenever there is an update
+            to your abstract status.
+          </Text>
         </>
       );
       subject = `Abstract ${statusForSubject} - ${codeToShow}`;
@@ -151,7 +168,7 @@ export const sendEmail = async ({
         <>
           <Text>Dear {registration.name},</Text>
           {registration.registrationStatus === "Confirmed" ||
-            registration.paymentStatus === "Completed" ? (
+          registration.paymentStatus === "Completed" ? (
             <Text>
               We are pleased to inform you that your registration for the
               conference has been successfully confirmed.
@@ -164,10 +181,12 @@ export const sendEmail = async ({
           )}
           <Text>Your registration details:</Text>
           <ul>
-            <li>
-              Registration Code:{" "}
-              <strong>{registration.registrationCode}</strong>
-            </li>
+            {registration.registrationCode && (
+              <li>
+                Registration Code:{" "}
+                <strong>{registration.registrationCode}</strong>
+              </li>
+            )}
             <li>
               Registration Type:{" "}
               <strong>{registration.registrationType}</strong>
@@ -181,9 +200,17 @@ export const sendEmail = async ({
             don&apos;t hesitate to contact us.
           </Text>
           <Text>We look forward to seeing you at the conference!</Text>
+          <Text>
+            You can view your registration details here:{" "}
+            <a href={submissionDetailsUrl}>{submissionDetailsUrl}</a>
+          </Text>
+          <Text>
+            You will receive an email notification whenever there is an update
+            to your registration status.
+          </Text>
         </>
       );
-      subject = `Registration Successful - ${registration.registrationCode}`;
+      subject = `Registration Successful${registration.registrationCode ? ` - ${registration.registrationCode}` : ""}`;
       buttonText = "View Registration Details";
       buttonUrl = submissionDetailsUrl;
     } else if (emailType === "UPDATE_PERSENTATION_STATUS") {
@@ -243,6 +270,14 @@ export const sendEmail = async ({
             If you have any questions about this update, please contact our
             support team.
           </Text>
+          <Text>
+            You can view your submission details here:{" "}
+            <a href={submissionDetailsUrl}>{submissionDetailsUrl}</a>
+          </Text>
+          <Text>
+            You will receive an email notification whenever there is an update
+            to your abstract status.
+          </Text>
         </>
       );
       subject = `Presentation Status Update - ${codeToShow}`;
@@ -289,7 +324,8 @@ export const sendEmail = async ({
   } catch (error) {
     console.error("Error sending email:", error);
     throw new Error(
-      `Failed to send email: ${error instanceof Error ? error.message : String(error)
+      `Failed to send email: ${
+        error instanceof Error ? error.message : String(error)
       }`
     );
   }
