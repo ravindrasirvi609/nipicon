@@ -585,18 +585,6 @@ const AbstractForm: React.FC = () => {
             )}
           </div>
         </div>
-
-        <div className="text-center pt-8 pb-4">
-          <p className="text-gray-500">
-            For queries, contact us at{" "}
-            <a
-              href="mailto:psc@pharmanecia.org"
-              className="text-indigo-600 hover:text-indigo-800 font-medium"
-            >
-              psc@pharmanecia.org
-            </a>
-          </p>
-        </div>
       </div>
     </div>
   );
