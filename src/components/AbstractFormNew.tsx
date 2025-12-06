@@ -139,6 +139,9 @@ export function AbstractForm() {
     if (!subject && !isPharmaInnovatorAward) {
       newErrors.subject = "Paper Track is required";
     }
+    if (!Designation) {
+      newErrors.Designation = "Designation is required";
+    }
     if (!presentationType && !isPharmaInnovatorAward) {
       newErrors.presentationType = "Presentation Type is required";
     }

@@ -388,6 +388,12 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
                 </div>
               </div>
             )}
+            {errors.idCardUrl && (
+              <p className="text-red-500 text-sm mt-2 flex items-center gap-1">
+                <span className="block w-1 h-1 bg-red-500 rounded-full" />
+                {errors.idCardUrl}
+              </p>
+            )}
           </div>
         )}
 
@@ -741,6 +747,9 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
                 placeholder="0.00"
               />
             </div>
+            {errors.paymentAmount && (
+              <p className="text-red-500 text-sm mt-1">{errors.paymentAmount}</p>
+            )}
           </div>
 
           <div>
@@ -754,6 +763,9 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
               className={inputClasses}
               placeholder="Enter UTR number"
             />
+            {errors.transactionId && (
+              <p className="text-red-500 text-sm mt-1">{errors.transactionId}</p>
+            )}
           </div>
 
           <div>
@@ -767,6 +779,9 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
               className={inputClasses}
               placeholder="Your bank name"
             />
+            {errors.bankName && (
+              <p className="text-red-500 text-sm mt-1">{errors.bankName}</p>
+            )}
           </div>
 
           <div>
@@ -780,6 +795,9 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
               className={inputClasses}
               placeholder="Your bank branch"
             />
+            {errors.branchName && (
+              <p className="text-red-500 text-sm mt-1">{errors.branchName}</p>
+            )}
           </div>
 
           <div className="md:col-span-2">
@@ -792,6 +810,9 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
               required
               className={inputClasses}
             />
+            {errors.paymentDate && (
+              <p className="text-red-500 text-sm mt-1">{errors.paymentDate}</p>
+            )}
           </div>
         </div>
 
@@ -861,6 +882,12 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
                 ></div>
               </div>
             </div>
+          )}
+          {errors.paymentProofUrl && (
+            <p className="text-red-500 text-sm mt-2 flex items-center gap-1">
+              <span className="block w-1 h-1 bg-red-500 rounded-full" />
+              {errors.paymentProofUrl}
+            </p>
           )}
         </div>
       </div>

@@ -135,6 +135,47 @@ const RegistrationModal: React.FC<RegistrationModalProps> = ({
       errors.pincode = "Pincode must be 6 digits";
     }
 
+    if (!formData.country) {
+      errors.country = "Country is required";
+    }
+
+    if (!formData.gender) {
+      errors.gender = "Gender is required";
+    }
+
+    if (!formData.paymentAmount) {
+      errors.paymentAmount = "Payment Amount is required";
+    }
+
+    if (!formData.transactionId) {
+      errors.transactionId = "Transaction ID / UTR is required";
+    }
+
+    if (!formData.bankName) {
+      errors.bankName = "Bank Name is required";
+    }
+
+    if (!formData.branchName) {
+      errors.branchName = "Branch Name is required";
+    }
+
+    if (!formData.paymentDate) {
+      errors.paymentDate = "Payment Date is required";
+    }
+
+    if (!formData.paymentProofUrl) {
+      errors.paymentProofUrl = "Payment Proof is required";
+    }
+
+    const isStudentPlan =
+      selectedPlan.name.includes("Student") ||
+      selectedPlan.name.includes("UG") ||
+      selectedPlan.name.includes("PG");
+
+    if (isStudentPlan && !formData.idCardUrl) {
+      errors.idCardUrl = "ID Card / Letter from Institute is required";
+    }
+
     setFormErrors(errors);
     return Object.keys(errors).length === 0;
   };
