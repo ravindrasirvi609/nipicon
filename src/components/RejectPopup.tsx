@@ -46,7 +46,7 @@ const RejectPopup: React.FC<RejectPopupProps> = ({
             Cancel
           </button>
           <button
-            className="bg-red-500 hover:bg-red-600 text-white bg-blue-500 font-bold py-2 px-4 rounded"
+            className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded"
             onClick={handleReject}
           >
             Confirm Reject

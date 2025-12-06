@@ -156,9 +156,8 @@ const FeedbackForm: React.FC = () => {
             key={star}
             type="button"
             onClick={() => onChange(name, star)}
-            className={`text-2xl ${
-              star <= value ? "text-yellow-400" : "text-gray-300"
-            } transition-colors duration-200 hover:text-yellow-400 focus:outline-none`}
+            className={`text-2xl ${star <= value ? "text-yellow-400" : "text-gray-300"
+              } transition-colors duration-200 hover:text-yellow-400 focus:outline-none`}
             aria-label={`Rate ${star} out of ${max}`}
           >
             ★
@@ -499,7 +498,7 @@ const FeedbackForm: React.FC = () => {
                 <div className="p-4 rounded-xl bg-white/20 backdrop-blur-sm border border-white/30">
                   <label className="block text-sm font-medium text-gray-700 mb-3">
                     How likely are you to recommend this conference to others?
-                    (0-10) <span className="text-danger">*</span>
+                    (0-10) <span className="text-red-500">*</span>
                   </label>
                   <div className="flex flex-wrap justify-between gap-1">
                     {Array.from({ length: 11 }, (_, i) => i).map((num) => (
@@ -507,15 +506,14 @@ const FeedbackForm: React.FC = () => {
                         key={num}
                         type="button"
                         onClick={() => handleStarRating("wouldRecommend", num)}
-                        className={`w-9 h-9 rounded-full flex items-center justify-center transition-all duration-200 ${
-                          formData.wouldRecommend === num
+                        className={`w-9 h-9 rounded-full flex items-center justify-center transition-all duration-200 ${formData.wouldRecommend === num
                             ? num <= 3
-                              ? "bg-danger text-white"
+                              ? "bg-red-500 text-white"
                               : num <= 7
-                              ? "bg-yellow-500 text-white"
-                              : "bg-green text-white"
+                                ? "bg-yellow-500 text-white"
+                                : "bg-green-500 text-white"
                             : "bg-white/40 hover:bg-white/60"
-                        }`}
+                          }`}
                       >
                         {num}
                       </button>
@@ -615,9 +613,8 @@ const FeedbackForm: React.FC = () => {
               <button
                 type="button"
                 onClick={nextStep}
-                className={`px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition duration-200 flex items-center gap-2 ${
-                  !isStepValid() ? "opacity-50 cursor-not-allowed" : ""
-                }`}
+                className={`px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition duration-200 flex items-center gap-2 ${!isStepValid() ? "opacity-50 cursor-not-allowed" : ""
+                  }`}
                 disabled={!isStepValid()}
               >
                 Next
@@ -638,11 +635,10 @@ const FeedbackForm: React.FC = () => {
               <button
                 type="submit"
                 disabled={loading || !isStepValid()}
-                className={`px-8 py-3 bg-gradient-to-r from-purple-500 to-blue-500 text-white rounded-lg hover:from-purple-600 hover:to-blue-600 transition duration-200 flex items-center gap-2 ${
-                  loading || !isStepValid()
+                className={`px-8 py-3 bg-gradient-to-r from-purple-500 to-blue-500 text-white rounded-lg hover:from-purple-600 hover:to-blue-600 transition duration-200 flex items-center gap-2 ${loading || !isStepValid()
                     ? "opacity-50 cursor-not-allowed"
                     : ""
-                }`}
+                  }`}
               >
                 {loading ? (
                   <>
@@ -692,11 +688,10 @@ const FeedbackForm: React.FC = () => {
           {/* Message Display */}
           {message && (
             <div
-              className={`mt-6 p-4 rounded-xl text-center ${
-                message.includes("Error")
+              className={`mt-6 p-4 rounded-xl text-center ${message.includes("Error")
                   ? "bg-red-100 text-red-700 border border-red-200"
                   : "bg-green-100 text-green-700 border border-green-200"
-              }`}
+                }`}
             >
               {message}
             </div>
@@ -710,13 +705,12 @@ const FeedbackForm: React.FC = () => {
                   key={s}
                   type="button"
                   onClick={() => setStep(s)}
-                  className={`w-8 h-8 rounded-full flex items-center justify-center text-sm transition-all ${
-                    step === s
+                  className={`w-8 h-8 rounded-full flex items-center justify-center text-sm transition-all ${step === s
                       ? "bg-blue-500 text-white"
                       : s < step
-                      ? "bg-blue-100 text-blue-700"
-                      : "bg-gray-200 text-gray-500"
-                  }`}
+                        ? "bg-blue-100 text-blue-700"
+                        : "bg-gray-200 text-gray-500"
+                    }`}
                   aria-label={`Go to step ${s}`}
                   disabled={s > step && !isStepValid()}
                 >
