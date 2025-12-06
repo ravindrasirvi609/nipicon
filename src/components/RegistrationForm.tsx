@@ -122,13 +122,12 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
         </label>
         <div
           {...getRootProps()}
-          className={`border-2 border-dashed rounded-lg p-6 text-center cursor-pointer transition-colors ${
-            imageFile
+          className={`border-2 border-dashed rounded-lg p-6 text-center cursor-pointer transition-colors ${imageFile
               ? "border-green-500 bg-green-50"
               : isDragActive
                 ? "border-amber-500 bg-amber-500 bg-opacity-10"
                 : "border-gray-300 hover:border-amber-500"
-          }`}
+            }`}
         >
           <input {...getInputProps()} />
           {imageFile ? (
@@ -239,26 +238,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
         </div>
       </div>
 
-      <div className="mb-4">
-        <label className="block mb-2 text-gray-800 font-medium">
-          Full Name (for Certificate)
-        </label>
-        <input
-          type="text"
-          name="name"
-          value={formData.name}
-          onChange={onInputChange}
-          required
-          className="w-full p-2 border rounded text-gray-900"
-        />
-        {errors.name && (
-          <p className="text-red-600 text-sm mt-1">{errors.name}</p>
-        )}
-        <p className="text-sm text-gray-600 mt-1">
-          Spelling should be correct. The same name will be printed on the
-          certificate and cannot be changed after submission.
-        </p>
-      </div>
+
 
       <div className="mb-4">
         <label className="block mb-2 text-gray-800 font-medium">
@@ -297,64 +277,63 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
       {(selectedPlanName?.includes("Student") ||
         selectedPlanName?.includes("UG") ||
         selectedPlanName?.includes("PG")) && (
-        <div className="mb-6">
-          <label className="block mb-2 text-gray-800 font-medium">
-            Upload ID Card or Letter from Institute
-          </label>
-          <div
-            {...getIdCardRootProps()}
-            className={`border-2 border-dashed rounded-lg p-6 text-center cursor-pointer transition-colors ${
-              formData.idCardUrl
-                ? "border-green-500 bg-green-50"
-                : "border-gray-300 hover:border-amber-500"
-            }`}
-          >
-            <input {...getIdCardInputProps()} />
-            {formData.idCardUrl ? (
-              <div className="flex flex-col items-center">
-                <svg
-                  className="w-8 h-8 text-green-600 mb-2"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M5 13l4 4L19 7"
-                  />
-                </svg>
-                <p className="text-green-600 font-medium">
-                  ID Card Uploaded Successfully
-                </p>
-                {idCardFile && (
-                  <p className="text-sm text-gray-600 mt-1">
-                    {idCardFile.name}
+          <div className="mb-6">
+            <label className="block mb-2 text-gray-800 font-medium">
+              Upload ID Card or Letter from Institute
+            </label>
+            <div
+              {...getIdCardRootProps()}
+              className={`border-2 border-dashed rounded-lg p-6 text-center cursor-pointer transition-colors ${formData.idCardUrl
+                  ? "border-green-500 bg-green-50"
+                  : "border-gray-300 hover:border-amber-500"
+                }`}
+            >
+              <input {...getIdCardInputProps()} />
+              {formData.idCardUrl ? (
+                <div className="flex flex-col items-center">
+                  <svg
+                    className="w-8 h-8 text-green-600 mb-2"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M5 13l4 4L19 7"
+                    />
+                  </svg>
+                  <p className="text-green-600 font-medium">
+                    ID Card Uploaded Successfully
                   </p>
-                )}
+                  {idCardFile && (
+                    <p className="text-sm text-gray-600 mt-1">
+                      {idCardFile.name}
+                    </p>
+                  )}
+                </div>
+              ) : (
+                <p className="text-gray-600">
+                  Drag & drop ID card here, or click to select
+                </p>
+              )}
+            </div>
+            {uploadingField === "idCard" && isUploading && (
+              <div className="mt-2">
+                <div className="bg-gray-200 rounded-full h-2.5">
+                  <div
+                    className="bg-amber-500 h-2.5 rounded-full transition-all duration-300"
+                    style={{ width: `${uploadProgress}%` }}
+                  ></div>
+                </div>
+                <p className="text-sm text-gray-600 mt-1">
+                  Uploading: {uploadProgress}%
+                </p>
               </div>
-            ) : (
-              <p className="text-gray-600">
-                Drag & drop ID card here, or click to select
-              </p>
             )}
           </div>
-          {uploadingField === "idCard" && isUploading && (
-            <div className="mt-2">
-              <div className="bg-gray-200 rounded-full h-2.5">
-                <div
-                  className="bg-amber-500 h-2.5 rounded-full transition-all duration-300"
-                  style={{ width: `${uploadProgress}%` }}
-                ></div>
-              </div>
-              <p className="text-sm text-gray-600 mt-1">
-                Uploading: {uploadProgress}%
-              </p>
-            </div>
-          )}
-        </div>
-      )}
+        )}
 
       <div className="mb-4">
         <label className="block mb-2 text-gray-800 font-medium">Email</label>
@@ -662,11 +641,10 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
           </label>
           <div
             {...getPaymentProofRootProps()}
-            className={`border-2 border-dashed rounded-lg p-6 text-center cursor-pointer transition-colors ${
-              formData.paymentProofUrl
+            className={`border-2 border-dashed rounded-lg p-6 text-center cursor-pointer transition-colors ${formData.paymentProofUrl
                 ? "border-green-500 bg-green-50"
                 : "border-gray-300 hover:border-amber-500"
-            }`}
+              }`}
           >
             <input {...getPaymentProofInputProps()} />
             {formData.paymentProofUrl ? (

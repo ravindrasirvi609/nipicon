@@ -123,13 +123,12 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
         <label className={labelClasses}>Profile Picture</label>
         <div
           {...getRootProps()}
-          className={`border-2 border-dashed rounded-xl p-8 text-center cursor-pointer transition-all duration-300 ${
-            imageFile
-              ? "border-green-500 bg-green-50/50 dark:bg-green-900/20"
-              : isDragActive
-                ? "border-indigo-500 bg-indigo-50 dark:bg-indigo-900/20"
-                : "border-slate-300 dark:border-slate-600 hover:border-indigo-500 dark:hover:border-indigo-400 hover:bg-slate-50 dark:hover:bg-slate-800"
-          }`}
+          className={`border-2 border-dashed rounded-xl p-8 text-center cursor-pointer transition-all duration-300 ${imageFile
+            ? "border-green-500 bg-green-50/50 dark:bg-green-900/20"
+            : isDragActive
+              ? "border-indigo-500 bg-indigo-50 dark:bg-indigo-900/20"
+              : "border-slate-300 dark:border-slate-600 hover:border-indigo-500 dark:hover:border-indigo-400 hover:bg-slate-50 dark:hover:bg-slate-800"
+            }`}
         >
           <input {...getInputProps()} />
           {imageFile ? (
@@ -263,27 +262,6 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
             />
           </div>
         </div>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div>
-          <label className={labelClasses}>Full Name (for Certificate)</label>
-          <input
-            type="text"
-            name="name"
-            value={formData.name}
-            onChange={onInputChange}
-            required
-            className={inputClasses}
-            placeholder="Dr. John Doe"
-          />
-          {errors.name && (
-            <p className="text-red-500 text-sm mt-1">{errors.name}</p>
-          )}
-          <p className="text-xs text-slate-500 dark:text-slate-400 mt-2">
-            This name will appear on your certificate exactly as entered.
-          </p>
-        </div>
 
         <div>
           <label className={labelClasses}>Date of Birth</label>
@@ -300,7 +278,6 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
           )}
         </div>
       </div>
-
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>
           <label className={labelClasses}>Applying as</label>
@@ -336,24 +313,46 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
       {(selectedPlanName?.includes("Student") ||
         selectedPlanName?.includes("UG") ||
         selectedPlanName?.includes("PG")) && (
-        <div className="bg-slate-50/50 dark:bg-slate-800/50 p-6 rounded-2xl border border-slate-200 dark:border-slate-700">
-          <label className={labelClasses}>
-            Upload ID Card or Letter from Institute
-          </label>
-          <div
-            {...getIdCardRootProps()}
-            className={`border-2 border-dashed rounded-xl p-6 text-center cursor-pointer transition-all duration-300 ${
-              formData.idCardUrl
+          <div className="bg-slate-50/50 dark:bg-slate-800/50 p-6 rounded-2xl border border-slate-200 dark:border-slate-700">
+            <label className={labelClasses}>
+              Upload ID Card or Letter from Institute
+            </label>
+            <div
+              {...getIdCardRootProps()}
+              className={`border-2 border-dashed rounded-xl p-6 text-center cursor-pointer transition-all duration-300 ${formData.idCardUrl
                 ? "border-green-500 bg-green-50/50 dark:bg-green-900/20"
                 : "border-slate-300 dark:border-slate-600 hover:border-indigo-500 dark:hover:border-indigo-400 hover:bg-slate-50 dark:hover:bg-slate-800"
-            }`}
-          >
-            <input {...getIdCardInputProps()} />
-            {formData.idCardUrl ? (
-              <div className="flex flex-col items-center">
-                <div className="flex items-center gap-2 text-green-600 dark:text-green-400 font-medium bg-green-100 dark:bg-green-900/30 px-4 py-2 rounded-full mb-2">
+                }`}
+            >
+              <input {...getIdCardInputProps()} />
+              {formData.idCardUrl ? (
+                <div className="flex flex-col items-center">
+                  <div className="flex items-center gap-2 text-green-600 dark:text-green-400 font-medium bg-green-100 dark:bg-green-900/30 px-4 py-2 rounded-full mb-2">
+                    <svg
+                      className="w-5 h-5"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M5 13l4 4L19 7"
+                      />
+                    </svg>
+                    <span>Uploaded Successfully</span>
+                  </div>
+                  {idCardFile && (
+                    <p className="text-sm text-slate-500 dark:text-slate-400">
+                      {idCardFile.name}
+                    </p>
+                  )}
+                </div>
+              ) : (
+                <div className="flex flex-col items-center gap-2">
                   <svg
-                    className="w-5 h-5"
+                    className="w-8 h-8 text-slate-400"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -362,50 +361,27 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
                       strokeLinecap="round"
                       strokeLinejoin="round"
                       strokeWidth={2}
-                      d="M5 13l4 4L19 7"
+                      d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2"
                     />
                   </svg>
-                  <span>Uploaded Successfully</span>
-                </div>
-                {idCardFile && (
-                  <p className="text-sm text-slate-500 dark:text-slate-400">
-                    {idCardFile.name}
+                  <p className="text-slate-600 dark:text-slate-300">
+                    Drag & drop ID card here, or click to select
                   </p>
-                )}
-              </div>
-            ) : (
-              <div className="flex flex-col items-center gap-2">
-                <svg
-                  className="w-8 h-8 text-slate-400"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2"
-                  />
-                </svg>
-                <p className="text-slate-600 dark:text-slate-300">
-                  Drag & drop ID card here, or click to select
-                </p>
+                </div>
+              )}
+            </div>
+            {uploadingField === "idCard" && isUploading && (
+              <div className="mt-4">
+                <div className="bg-slate-200 dark:bg-slate-700 rounded-full h-2 overflow-hidden">
+                  <div
+                    className="bg-indigo-600 h-full rounded-full transition-all duration-300"
+                    style={{ width: `${uploadProgress}%` }}
+                  ></div>
+                </div>
               </div>
             )}
           </div>
-          {uploadingField === "idCard" && isUploading && (
-            <div className="mt-4">
-              <div className="bg-slate-200 dark:bg-slate-700 rounded-full h-2 overflow-hidden">
-                <div
-                  className="bg-indigo-600 h-full rounded-full transition-all duration-300"
-                  style={{ width: `${uploadProgress}%` }}
-                ></div>
-              </div>
-            </div>
-          )}
-        </div>
-      )}
+        )}
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>
@@ -448,11 +424,10 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
           {["Male", "Female", "Other"].map((option) => (
             <label
               key={option}
-              className={`cursor-pointer border rounded-xl p-3 text-center transition-all ${
-                formData.gender === option
-                  ? "bg-indigo-50 dark:bg-indigo-900/20 border-indigo-500 text-indigo-700 dark:text-indigo-300 font-semibold"
-                  : "bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700"
-              }`}
+              className={`cursor-pointer border rounded-xl p-3 text-center transition-all ${formData.gender === option
+                ? "bg-indigo-50 dark:bg-indigo-900/20 border-indigo-500 text-indigo-700 dark:text-indigo-300 font-semibold"
+                : "bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700"
+                }`}
             >
               <input
                 type="radio"
@@ -744,11 +719,10 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
           </label>
           <div
             {...getPaymentProofRootProps()}
-            className={`border-2 border-dashed rounded-xl p-6 text-center cursor-pointer transition-all duration-300 ${
-              formData.paymentProofUrl
-                ? "border-green-500 bg-green-50/50 dark:bg-green-900/20"
-                : "border-slate-300 dark:border-slate-600 hover:border-indigo-500 dark:hover:border-indigo-400 hover:bg-slate-50 dark:hover:bg-slate-800"
-            }`}
+            className={`border-2 border-dashed rounded-xl p-6 text-center cursor-pointer transition-all duration-300 ${formData.paymentProofUrl
+              ? "border-green-500 bg-green-50/50 dark:bg-green-900/20"
+              : "border-slate-300 dark:border-slate-600 hover:border-indigo-500 dark:hover:border-indigo-400 hover:bg-slate-50 dark:hover:bg-slate-800"
+              }`}
           >
             <input {...getPaymentProofInputProps()} />
             {formData.paymentProofUrl ? (

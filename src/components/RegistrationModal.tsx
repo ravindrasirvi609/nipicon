@@ -101,8 +101,12 @@ const RegistrationModal: React.FC<RegistrationModalProps> = ({
       errors.whatsappNumber = "WhatsApp number must be 10 digits";
     }
 
-    if (!formData.name) {
-      errors.name = "Name is required";
+    if (!formData.firstName) {
+      errors.firstName = "First Name is required";
+    }
+
+    if (!formData.lastName) {
+      errors.lastName = "Last Name is required";
     }
 
     if (!formData.affiliation) {
@@ -139,7 +143,8 @@ const RegistrationModal: React.FC<RegistrationModalProps> = ({
     e.preventDefault();
 
     const registrationType = selectedPlan.name;
-    const newFormData = { ...formData, registrationType };
+    const fullName = `${formData.firstName} ${formData.lastName}`.trim();
+    const newFormData = { ...formData, registrationType, name: fullName };
 
     if (!validateForm()) {
       return;
