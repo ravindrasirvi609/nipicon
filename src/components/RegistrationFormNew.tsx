@@ -109,6 +109,12 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
     multiple: false,
   });
 
+  const isForeignPlan = [
+    "Foreign Delegates",
+    "Foreign Presenter (Online)",
+    "Accompanying Person (Foreign)",
+  ].includes(selectedPlanName || "");
+
   const inputClasses =
     "w-full p-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all text-slate-900 dark:text-white placeholder:text-slate-400";
   const labelClasses =
@@ -262,22 +268,24 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
             />
           </div>
         </div>
-
-        <div>
-          <label className={labelClasses}>Date of Birth</label>
-          <input
-            type="date"
-            name="dob"
-            value={formData.dob}
-            onChange={onInputChange}
-            required
-            className={inputClasses}
-          />
-          {errors.dob && (
-            <p className="text-red-500 text-sm mt-1">{errors.dob}</p>
-          )}
-        </div>
       </div>
+
+      {/* Date of Birth */}
+      <div>
+        <label className={labelClasses}>Date of Birth</label>
+        <input
+          type="date"
+          name="dob"
+          value={formData.dob}
+          onChange={onInputChange}
+          required
+          className={inputClasses}
+        />
+        {errors.dob && (
+          <p className="text-red-500 text-sm mt-1">{errors.dob}</p>
+        )}
+      </div>
+
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>
           <label className={labelClasses}>Applying as</label>
@@ -600,46 +608,120 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
                 d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
               />
             </svg>
-            Bank Account Details
+            {isForeignPlan
+              ? "International Payment Instructions (USD)"
+              : "Bank Account Details"}
           </h4>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-y-2 text-sm text-slate-700 dark:text-slate-300">
-            <p>
-              <span className="font-semibold text-slate-900 dark:text-white">
-                Account Name:
-              </span>{" "}
-              Institute of Pharmacy, Nirma University
-            </p>
-            <p>
-              <span className="font-semibold text-slate-900 dark:text-white">
-                Bank Name:
-              </span>{" "}
-              The Kalupur Commercial Co-Operative Bank Ltd.
-            </p>
-            <p className="md:col-span-2">
-              <span className="font-semibold text-slate-900 dark:text-white">
-                Branch:
-              </span>{" "}
-              Nirma University Campus, S.G. Highway, Ahmedabad
-            </p>
-            <p>
-              <span className="font-semibold text-slate-900 dark:text-white">
-                Account No.:
-              </span>{" "}
-              09720180112
-            </p>
-            <p>
-              <span className="font-semibold text-slate-900 dark:text-white">
-                IFSC CODE:
-              </span>{" "}
-              KCCB0NRM097
-            </p>
-            <p>
-              <span className="font-semibold text-slate-900 dark:text-white">
-                MICR Code:
-              </span>{" "}
-              380126029
-            </p>
-          </div>
+          {isForeignPlan ? (
+            <div className="space-y-4 text-sm text-slate-700 dark:text-slate-300">
+              <div className="bg-white dark:bg-slate-800 p-4 rounded-xl border border-indigo-100 dark:border-indigo-800/50 space-y-3">
+                <p className="font-semibold text-indigo-700 dark:text-indigo-300 text-base border-b border-indigo-100 dark:border-indigo-800/50 pb-2">
+                  Payment Instruction for US Dollar (USD)
+                </p>
+
+                <div className="space-y-2">
+                  <p className="font-medium">Please Remit Proceeds to:</p>
+                  <div className="pl-3 border-l-2 border-indigo-200 dark:border-indigo-700 space-y-1">
+                    <p className="font-bold">HABIB AMERICAN BANK, NEW YORK</p>
+                    <p>
+                      SWIFT ID:{" "}
+                      <span className="font-mono bg-indigo-50 dark:bg-indigo-900/40 px-1 rounded select-all">
+                        HANYUS33
+                      </span>
+                    </p>
+                    <p>
+                      CHIPS ABA:{" "}
+                      <span className="font-mono bg-indigo-50 dark:bg-indigo-900/40 px-1 rounded select-all">
+                        0736
+                      </span>
+                    </p>
+                    <p>
+                      FED ABA Number:{" "}
+                      <span className="font-mono bg-indigo-50 dark:bg-indigo-900/40 px-1 rounded select-all">
+                        026007362
+                      </span>
+                    </p>
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <p className="font-medium">For Credit to Account of:</p>
+                  <div className="pl-3 border-l-2 border-indigo-200 dark:border-indigo-700 space-y-1">
+                    <p className="font-bold">
+                      THE KALUPUR COMMERCIAL CO-OPERATIVE BANK LTD.
+                    </p>
+                    <p>
+                      Account Number:{" "}
+                      <span className="font-mono bg-indigo-50 dark:bg-indigo-900/40 px-1 rounded select-all">
+                        20729115
+                      </span>
+                    </p>
+                    <p>
+                      SWIFT ID:{" "}
+                      <span className="font-mono bg-indigo-50 dark:bg-indigo-900/40 px-1 rounded select-all">
+                        KALUINAAXXX
+                      </span>
+                    </p>
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <p className="font-medium">For further credit to:</p>
+                  <div className="pl-3 border-l-2 border-indigo-200 dark:border-indigo-700 space-y-1">
+                    <p className="font-bold">
+                      Institute of Pharmacy Under Nirma University
+                    </p>
+                    <p>
+                      Account Number:{" "}
+                      <span className="font-mono bg-indigo-50 dark:bg-indigo-900/40 px-1 rounded select-all">
+                        09720180112
+                      </span>
+                    </p>
+                    <p>Nirma University Branch</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-y-2 text-sm text-slate-700 dark:text-slate-300">
+              <p>
+                <span className="font-semibold text-slate-900 dark:text-white">
+                  Account Name:
+                </span>{" "}
+                Institute of Pharmacy, Nirma University
+              </p>
+              <p>
+                <span className="font-semibold text-slate-900 dark:text-white">
+                  Bank Name:
+                </span>{" "}
+                The Kalupur Commercial Co-Operative Bank Ltd.
+              </p>
+              <p className="md:col-span-2">
+                <span className="font-semibold text-slate-900 dark:text-white">
+                  Branch:
+                </span>{" "}
+                Nirma University Campus, S.G. Highway, Ahmedabad
+              </p>
+              <p>
+                <span className="font-semibold text-slate-900 dark:text-white">
+                  Account No.:
+                </span>{" "}
+                09720180112
+              </p>
+              <p>
+                <span className="font-semibold text-slate-900 dark:text-white">
+                  IFSC CODE:
+                </span>{" "}
+                KCCB0NRM097
+              </p>
+              <p>
+                <span className="font-semibold text-slate-900 dark:text-white">
+                  MICR Code:
+                </span>{" "}
+                380126029
+              </p>
+            </div>
+          )}
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
