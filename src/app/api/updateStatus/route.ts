@@ -2,6 +2,7 @@ import AbstractModel from "@/Model/AbstractModel";
 import { connect } from "@/dbConfig/dbConfig";
 import { sendEmail } from "@/lib/mailer";
 import { NextRequest, NextResponse } from "next/server";
+import { getTrackCode } from "@/data";
 
 connect();
 
@@ -45,7 +46,7 @@ export async function PATCH(req: NextRequest) {
         }
         const abstractCode = await generateAbstractCode(
           abstract.subject,
-          presentationType
+          abstract.isPharmaInnovatorAward
         );
         abstract.AbstractCode = abstractCode;
       }
@@ -79,40 +80,37 @@ export async function PATCH(req: NextRequest) {
 }
 async function generateAbstractCode(
   subject: string,
-  presentationType: string
+  isPharmaInnovatorAward: boolean
 ): Promise<string> {
-  const subjectCodes: { [key: string]: string } = {
-    pharmaceuticalTechnology: "PT",
-    medChem: "PC",
-    pharmacognosy: "PG",
-    pharmacologyToxicology: "PH",
-    pharmaceuticalAnalysis: "PA",
-    biopharmaceutics: "BP",
-    biotechnology: "BT",
-    clinicalPharmacy: "CP",
-    pharmaceuticalEducation: "PE",
-    drugRegulatoryAffairs: "DR",
-    pharmacoeconomics: "EEC",
-    aiBioinformatics: "AI",
-  };
+  let prefix = "NIP";
 
-  const subjectCode = subjectCodes[subject] || "XX";
-  const presentationPrefix = presentationType === "Oral" ? "O" : "E";
+  if (isPharmaInnovatorAward) {
+    prefix = "PIA";
+  } else {
+    // Use getTrackCode from data.ts to get the prefix (e.g., NA, PC)
+    prefix = getTrackCode(subject);
+  }
 
+  // Find the last abstract that has a Final AbstractCode starting with this prefix
   const lastAbstract = await AbstractModel.findOne({
-    subject: subject,
-    presentationType: presentationType,
-    AbstractCode: { $regex: `^${presentationPrefix}${subjectCode}` },
+    AbstractCode: { $regex: `^${prefix}` },
   }).sort({ AbstractCode: -1 });
 
   let sequenceNumber = 1;
 
   if (lastAbstract && lastAbstract.AbstractCode) {
-    const lastSequence = parseInt(lastAbstract.AbstractCode.slice(-3), 10);
-    sequenceNumber = lastSequence + 1;
+    // Extract sequence number
+    // Format is likely PREFIX + 3 digits (e.g., NA001)
+    // We slice off the prefix length
+    const codePart = lastAbstract.AbstractCode.slice(prefix.length);
+    const lastSequence = parseInt(codePart, 10);
+
+    if (!isNaN(lastSequence)) {
+      sequenceNumber = lastSequence + 1;
+    }
   }
 
   const paddedSequence = sequenceNumber.toString().padStart(3, "0");
 
-  return `${presentationPrefix}${subjectCode}${paddedSequence}`;
+  return `${prefix}${paddedSequence}`;
 }

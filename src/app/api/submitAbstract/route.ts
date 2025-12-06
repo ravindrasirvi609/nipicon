@@ -84,20 +84,9 @@ export async function POST(req: NextRequest) {
     }
 
     let temporyAbstractCode = "";
-    if (isPharmaInnovatorAward) {
-      // Generate PIA code
-      const lastPIA = await AbstractModel.findOne({
-        temporyAbstractCode: { $regex: "^PIA" },
-      }).sort({ createdAt: -1 });
-      let sequence = 1;
-      if (lastPIA && lastPIA.temporyAbstractCode) {
-        const lastSeq = parseInt(lastPIA.temporyAbstractCode.slice(3));
-        if (!isNaN(lastSeq)) sequence = lastSeq + 1;
-      }
-      temporyAbstractCode = `PIA${sequence.toString().padStart(2, "0")}`;
-    } else {
-      temporyAbstractCode = await abstractCodeGeneration();
-    }
+    temporyAbstractCode = await abstractCodeGeneration(
+      isPharmaInnovatorAward
+    );
 
     const url = `${process.env.NEXT_PUBLIC_BASE_URL}/abstractForm/${temporyAbstractCode}`;
     const qrCodeBuffer = await QRCode.toBuffer(url);
@@ -183,27 +172,48 @@ export async function POST(req: NextRequest) {
   }
 }
 
-async function abstractCodeGeneration(): Promise<string> {
-  const opfPrefix = "NIP";
-  const year = new Date().getFullYear().toString().slice(-2);
+import { getTrackCode } from "@/data";
 
-  // Find the last abstract and get its sequence number
-  const lastAbstract = await AbstractModel.findOne().sort({
-    temporyAbstractCode: -1,
-  });
+async function abstractCodeGeneration(
+  isPharmaInnovatorAward: boolean
+): Promise<string> {
+  if (isPharmaInnovatorAward) {
+    const prefix = "PIA";
+    // Find last PIA code
+    const lastPIA = await AbstractModel.findOne({
+      temporyAbstractCode: { $regex: `^${prefix}` },
+    }).sort({ createdAt: -1 });
 
-  let sequenceNumber;
-  if (lastAbstract && lastAbstract.temporyAbstractCode) {
-    // Extract the sequence number from the last abstract code
-    const lastSequence = parseInt(
-      lastAbstract.temporyAbstractCode.slice(3, 6),
-      10
-    );
-    sequenceNumber = (lastSequence + 1).toString().padStart(3, "0");
+    let sequence = 1;
+    if (lastPIA && lastPIA.temporyAbstractCode) {
+      // Format: PIA01
+      const codePart = lastPIA.temporyAbstractCode.slice(prefix.length);
+      const lastSeq = parseInt(codePart, 10);
+      if (!isNaN(lastSeq)) sequence = lastSeq + 1;
+    }
+    return `${prefix}${sequence.toString().padStart(2, "0")}`;
   } else {
-    // If no abstracts exist, start from 001
-    sequenceNumber = "001";
-  }
+    const prefix = "NIP";
+    const year = new Date().getFullYear().toString().slice(-2);
+    // Find last NIP code
+    // Format: NIP00125 (Prefix + Seq + Year)
+    // We search for codes starting with NIP
+    const lastAbstract = await AbstractModel.findOne({
+      temporyAbstractCode: { $regex: `^${prefix}` },
+    }).sort({ createdAt: -1 });
 
-  return `${opfPrefix}${sequenceNumber}${year}`;
+    let sequenceNumber = 1;
+    if (lastAbstract && lastAbstract.temporyAbstractCode) {
+      // Format: NIP00125
+      // Extract sequence (chars 3 to 6)
+      const lastSequence = parseInt(
+        lastAbstract.temporyAbstractCode.slice(3, 6),
+        10
+      );
+      if (!isNaN(lastSequence)) {
+        sequenceNumber = lastSequence + 1;
+      }
+    }
+    return `${prefix}${sequenceNumber.toString().padStart(3, "0")}${year}`;
+  }
 }

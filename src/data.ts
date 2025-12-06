@@ -367,27 +367,27 @@ export const tracks = [
   {
     value: "trackA",
     label: "A. Next-Gen Formulations, Nanotechnology and Biotechnology",
-    code: "A",
+    code: "NA",
   },
   {
     value: "trackB",
     label: "B. Pharmacology, Clinical Pharmacy & Patient Care",
-    code: "B",
+    code: "PC",
   },
   {
     value: "trackC",
     label: "C. Pharmaceutical Analysis, Quality & Regulatory Science",
-    code: "C",
+    code: "PA",
   },
   {
     value: "trackD",
     label: "D. Herbal Medicines & Natural Products",
-    code: "D",
+    code: "HN",
   },
   {
     value: "trackE",
     label: "E. AI in Drug Discovery & Pharmaceutical Chemistry",
-    code: "E",
+    code: "AI",
   },
   { value: "pharmaInnovator", label: "Pharma Innovator Award", code: "PIA" },
 ];
