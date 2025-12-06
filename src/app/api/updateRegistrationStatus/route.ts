@@ -12,13 +12,30 @@ async function generateRegistrationCode(
 ): Promise<string> {
   const categoryCode = getCategoryCode(registrationType);
 
-  // Count existing registrations with this category code
-  const existingCount = await RegistrationModel.countDocuments({
+  // Find the last registration with this category code to determine the next sequence number
+  const lastRegistration = await RegistrationModel.findOne({
     registrationCode: { $regex: `^R${categoryCode}` },
-  });
+  })
+    .sort({ registrationCode: -1 }) // Sort descending to get the latest
+    .select("registrationCode");
+
+  let nextSequence = 1;
+
+  if (lastRegistration && lastRegistration.registrationCode) {
+    // Extract the numeric part
+    const currentSequenceStr = lastRegistration.registrationCode.replace(
+      `R${categoryCode}`,
+      ""
+    );
+    const currentSequence = parseInt(currentSequenceStr, 10);
+
+    if (!isNaN(currentSequence)) {
+      nextSequence = currentSequence + 1;
+    }
+  }
 
   // Generate next sequence number
-  const sequenceNumber = (existingCount + 1).toString().padStart(3, "0");
+  const sequenceNumber = nextSequence.toString().padStart(3, "0");
 
   return `R${categoryCode}${sequenceNumber}`;
 }
@@ -73,7 +90,10 @@ export async function PATCH(request: NextRequest) {
           emailType: "REGISTRATION_SUCCESS",
         });
       } catch (emailError) {
-        console.error("Failed to send registration confirmation email:", emailError);
+        console.error(
+          "Failed to send registration confirmation email:",
+          emailError
+        );
         // Don't fail the request if email fails, but log it
       }
 

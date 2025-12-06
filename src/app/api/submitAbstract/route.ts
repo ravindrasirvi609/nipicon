@@ -101,10 +101,6 @@ export async function POST(req: NextRequest) {
 
     const url = `${process.env.NEXT_PUBLIC_BASE_URL}/abstractForm/${temporyAbstractCode}`;
     const qrCodeBuffer = await QRCode.toBuffer(url);
-    const qrCodeUrl = await uploadQRCodeToFirebase(
-      qrCodeBuffer,
-      `${temporyAbstractCode}.png`
-    );
 
     const abstractData = {
       email,
@@ -120,7 +116,6 @@ export async function POST(req: NextRequest) {
       city,
       state,
       pincode,
-      qrCodeUrl,
       temporyAbstractCode,
       paperType,
       presentationType,
@@ -189,7 +184,7 @@ export async function POST(req: NextRequest) {
 }
 
 async function abstractCodeGeneration(): Promise<string> {
-  const opfPrefix = "OPF";
+  const opfPrefix = "NIP";
   const year = new Date().getFullYear().toString().slice(-2);
 
   // Find the last abstract and get its sequence number
