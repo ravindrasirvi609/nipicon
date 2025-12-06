@@ -3,6 +3,7 @@ import { connect } from "@/dbConfig/dbConfig";
 import RegistrationModel from "@/Model/RegistrationModel";
 import { getCategoryCode } from "@/data";
 import { sendEmail } from "@/lib/mailer";
+import AbstractModel from "@/Model/AbstractModel";
 
 connect();
 
@@ -68,6 +69,9 @@ export async function PATCH(request: NextRequest) {
       );
     }
 
+
+    let updatedAbstract = null;
+
     if (action === "confirm") {
       // Generate registration code if not already assigned
       if (!registration.registrationCode) {
@@ -82,6 +86,35 @@ export async function PATCH(request: NextRequest) {
       registration.updatedAt = new Date();
 
       await registration.save();
+
+      // Update associated Abstract if exists
+      // Try to find abstract by abstractId invalid in registration or by email
+      let abstractToUpdate = null;
+      if (registration.abstractId) {
+        abstractToUpdate = await AbstractModel.findById(
+          registration.abstractId
+        );
+      } else if (registration.email) {
+        abstractToUpdate = await AbstractModel.findOne({
+          email: registration.email,
+        });
+      }
+
+      if (abstractToUpdate) {
+        abstractToUpdate.registrationCompleted = true;
+        abstractToUpdate.registrationCode = registration.registrationCode;
+        updatedAbstract = await abstractToUpdate.save();
+
+        // Ensure registration links back to this abstract if not already
+        if (
+          !registration.abstractId ||
+          registration.abstractId.toString() !== abstractToUpdate._id.toString()
+        ) {
+          registration.abstractId = abstractToUpdate._id;
+          registration.abstractSubmitted = true;
+          await registration.save();
+        }
+      }
 
       // Send confirmation email
       try {
@@ -102,6 +135,7 @@ export async function PATCH(request: NextRequest) {
         message: "Registration confirmed successfully",
         registrationCode: registration.registrationCode,
         registration,
+        abstract: updatedAbstract,
       });
     } else if (action === "reject") {
       registration.paymentStatus = "Failed";
@@ -115,12 +149,32 @@ export async function PATCH(request: NextRequest) {
 
       await registration.save();
 
+      // If there is an abstract, we might want to untag it? 
+      // Current requirement doesn't explicitly say to untag, but it's safe to leave 'registrationCompleted' 
+      // as false if we were to revert it, but 'Pending' registration usually implies not complete.
+      // However, usually 'registrationCompleted' flag on Abstract acts as a gate. 
+      // If we reject, we should probably set it to false.
+
+      let abstractToUpdate = null;
+      if (registration.abstractId) {
+        abstractToUpdate = await AbstractModel.findById(registration.abstractId);
+      } else if (registration.email) {
+        abstractToUpdate = await AbstractModel.findOne({ email: registration.email });
+      }
+
+      if (abstractToUpdate) {
+        abstractToUpdate.registrationCompleted = false;
+        abstractToUpdate.registrationCode = undefined; // Remove code
+        updatedAbstract = await abstractToUpdate.save();
+      }
+
       // TODO: Add email sending functionality
 
       return NextResponse.json({
         success: true,
         message: "Registration rejected",
         registration,
+        abstract: updatedAbstract
       });
     }
   } catch (error) {

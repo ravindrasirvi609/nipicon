@@ -111,6 +111,19 @@ export async function POST(req: NextRequest) {
       { new: true }
     );
 
+    // Sync back to Abstract if found
+    if (foundAbstractId) {
+      const abstractUpdates: any = {
+        registrationCode: updatedRegistration.registrationCode,
+      };
+
+      if (updatedRegistration.paymentStatus === "Completed") {
+        abstractUpdates.registrationCompleted = true;
+      }
+
+      await AbstractModel.findByIdAndUpdate(foundAbstractId, abstractUpdates);
+    }
+
     // Send confirmation email
     try {
       await sendEmail({

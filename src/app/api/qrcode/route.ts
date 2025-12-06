@@ -45,20 +45,36 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     }
 
     // If we found a registration but not an abstract, try to find the corresponding abstract
-    if (registration && registration.registrationCode && !abstract) {
-      abstract = await AbstractModel.findOne({
-        registrationCode: registration.registrationCode,
-      }).lean();
-      console.log("abstract----3", abstract);
+    if (registration && !abstract) {
+      if (registration.registrationCode) {
+        abstract = await AbstractModel.findOne({
+          registrationCode: registration.registrationCode,
+        }).lean();
+      }
+      // Fallback: search by email
+      if (!abstract && registration.email) {
+        abstract = await AbstractModel.findOne({
+          email: registration.email
+        }).lean();
+        console.log("abstract----fallback-email", abstract);
+      }
     }
 
     // If we found an abstract but not a registration, try to find the corresponding registration
+    if (abstract && !registration) {
+      if (abstract.registrationCode) {
+        registration = await RegistrationModel.findOne({
+          registrationCode: abstract.registrationCode,
+        }).lean();
+      }
 
-    if (abstract && !registration && abstract.registrationCode) {
-      registration = await RegistrationModel.findOne({
-        registrationCode: abstract.registrationCode,
-      }).lean();
-      console.log("registration----3", registration);
+      // Fallback: search by email
+      if (!registration && abstract.email) {
+        registration = await RegistrationModel.findOne({
+          email: abstract.email
+        }).lean();
+        console.log("registration----fallback-email", registration);
+      }
     }
 
     if (!abstract && !registration) {
