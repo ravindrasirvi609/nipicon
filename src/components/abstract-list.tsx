@@ -87,10 +87,10 @@ export function AbstractList() {
           prevAbstracts.map((a) =>
             a._id === abstractId
               ? {
-                  ...a,
-                  Status: newStatus,
-                  presentationType: presentationType || a.presentationType,
-                }
+                ...a,
+                Status: newStatus,
+                presentationType: presentationType || a.presentationType,
+              }
               : a
           )
         );
@@ -130,9 +130,9 @@ export function AbstractList() {
           prevAbstracts.map((a) =>
             a._id === abstractId
               ? {
-                  ...a,
-                  presentationFileStatus: newStatus,
-                }
+                ...a,
+                presentationFileStatus: newStatus,
+              }
               : a
           )
         );
@@ -151,9 +151,8 @@ export function AbstractList() {
       toast.error("No abstracts to export.");
       return;
     }
-    const fileName = `Abstracts_Export_${
-      new Date().toISOString().split("T")[0]
-    }`;
+    const fileName = `Abstracts_Export_${new Date().toISOString().split("T")[0]
+      }`;
     exportAbstractsToExcel(abstracts, fileName);
     toast.success("Abstracts exported successfully!");
   };
@@ -289,11 +288,10 @@ export function AbstractList() {
           {tracks.map((track) => (
             <div
               key={track.code}
-              className={`p-3 rounded-lg border cursor-pointer transition-all ${
-                filters.track === track.code
+              className={`p-3 rounded-lg border cursor-pointer transition-all ${filters.track === track.code
                   ? "ring-2 ring-[#034C8C] bg-blue-50 border-blue-300"
                   : "bg-gray-50 hover:bg-gray-100 border-gray-200"
-              }`}
+                }`}
               onClick={() =>
                 setFilters((prev) => ({
                   ...prev,
@@ -428,7 +426,6 @@ export function AbstractList() {
           <option value="all">All Presentation Types</option>
           <option value="Oral">Oral</option>
           <option value="Poster">Poster</option>
-          <option value="E-Poster">E-Poster</option>
         </select>
 
         {/* Special Filters */}
@@ -490,7 +487,7 @@ export function AbstractList() {
                       {sortOption === "createdAt"
                         ? "Creation Date"
                         : sortOption.charAt(0).toUpperCase() +
-                          sortOption.slice(1)}
+                        sortOption.slice(1)}
                     </button>
                   )
                 )}

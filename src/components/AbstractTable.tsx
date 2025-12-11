@@ -198,7 +198,7 @@ const AbstractTable: React.FC<AbstractTableProps> = ({
           Select a type
         </option>
         <option value="Oral">Oral</option>
-        <option value="E-Poster">E-Poster</option>
+        <option value="Poster">Poster</option>
       </select>
     </CustomModal>
   );
@@ -311,8 +311,8 @@ const AbstractTable: React.FC<AbstractTableProps> = ({
               <td className="py-3 px-4 text-left">
                 <span
                   className={`px-2 py-1 rounded text-xs ${abstract.articleType === "Research"
-                      ? "bg-blue-100 text-blue-800"
-                      : "bg-purple-100 text-purple-800"
+                    ? "bg-blue-100 text-blue-800"
+                    : "bg-purple-100 text-purple-800"
                     }`}
                 >
                   {abstract.articleType || abstract.paperType || "-"}
@@ -321,8 +321,8 @@ const AbstractTable: React.FC<AbstractTableProps> = ({
               <td className="py-3 px-4 text-left">
                 <span
                   className={`px-2 py-1 rounded text-xs ${abstract.presentationType === "Oral"
-                      ? "bg-green-100 text-green-800"
-                      : "bg-orange-100 text-orange-800"
+                    ? "bg-green-100 text-green-800"
+                    : "bg-orange-100 text-orange-800"
                     }`}
                 >
                   {abstract.presentationType || "Not Set"}
@@ -354,8 +354,8 @@ const AbstractTable: React.FC<AbstractTableProps> = ({
               <td className="py-3 px-4 text-left">
                 <span
                   className={`py-1 px-2 rounded-full text-xs ${abstract.registrationCompleted
-                      ? "bg-green-500 text-white"
-                      : "bg-red-500 text-white"
+                    ? "bg-green-500 text-white"
+                    : "bg-red-500 text-white"
                     }`}
                 >
                   {abstract.registrationCompleted ? "Complete" : "Incomplete"}
@@ -367,12 +367,12 @@ const AbstractTable: React.FC<AbstractTableProps> = ({
               <td className="py-3 px-4 text-left">
                 <span
                   className={`py-1 px-2 rounded-full text-xs ${abstract.Status === "Accepted"
-                      ? "bg-green-500 text-white"
-                      : abstract.Status === "Revision"
-                        ? "bg-red-500 text-white"
-                        : abstract.Status === "InReview"
-                          ? "bg-blue-500 text-white"
-                          : "bg-yellow-200 text-yellow-800"
+                    ? "bg-green-500 text-white"
+                    : abstract.Status === "Revision"
+                      ? "bg-red-500 text-white"
+                      : abstract.Status === "InReview"
+                        ? "bg-blue-500 text-white"
+                        : "bg-yellow-200 text-yellow-800"
                     }`}
                 >
                   {abstract.Status}
@@ -381,12 +381,12 @@ const AbstractTable: React.FC<AbstractTableProps> = ({
               <td className="px-4 py-4 whitespace-nowrap">
                 <span
                   className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${abstract.presentationFileStatus === "Approved"
-                      ? "bg-green-500 text-white"
-                      : abstract.presentationFileStatus === "InReview"
-                        ? "bg-yellow-300 text-yellow-900"
-                        : abstract.presentationFileStatus === "Revision"
-                          ? "bg-red-500 text-white"
-                          : "bg-gray-300 text-gray-800"
+                    ? "bg-green-500 text-white"
+                    : abstract.presentationFileStatus === "InReview"
+                      ? "bg-yellow-300 text-yellow-900"
+                      : abstract.presentationFileStatus === "Revision"
+                        ? "bg-red-500 text-white"
+                        : "bg-gray-300 text-gray-800"
                     }`}
                 >
                   {abstract.presentationFileStatus || "Not Uploaded"}

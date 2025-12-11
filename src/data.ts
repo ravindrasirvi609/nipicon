@@ -103,7 +103,7 @@ export const schedule = {
     },
     {
       time: "3:00 PM - 5:30 PM",
-      event: "E-Poster/Oral Presentation Session (Parallel Tracks)",
+      event: "Poster/Oral Presentation Session (Parallel Tracks)",
       venue: "Halls 3, 4, 5, 6, 7 & 8",
       speakers: [],
       subEvents: [
@@ -166,7 +166,7 @@ export const schedule = {
     },
     {
       time: "11:15 AM - 1:00 PM",
-      event: "E-Poster/Oral Presentation Session (Parallel Tracks)",
+      event: "Poster/Oral Presentation Session (Parallel Tracks)",
       venue: "Halls 3, 4, 5, 6, 7 & 8",
       speakers: [],
     },
