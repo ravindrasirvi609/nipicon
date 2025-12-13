@@ -1,6 +1,7 @@
 "use client";
 
 import { useFirebaseStorage } from "@/app/hooks/useFirebaseStorage";
+import EmailDeliveryNote from "./EmailDeliveryNote";
 import { designationOptions, indianStates, tracks } from "@/data";
 import axios from "axios";
 import { useState, ChangeEvent, useCallback } from "react";
@@ -319,6 +320,7 @@ export function AbstractForm() {
       <p className="text-center text-slate-500 dark:text-slate-400 mb-12">
         Please fill out the form below to submit your abstract.
       </p>
+      <EmailDeliveryNote />
       <form onSubmit={handleSubmit} className="space-y-8">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
@@ -1066,7 +1068,7 @@ export function AbstractForm() {
           )}
         </button>
       </form>
-    </div>
+    </div >
   );
 }
 

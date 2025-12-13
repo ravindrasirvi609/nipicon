@@ -1,4 +1,5 @@
 import RegistrationPlans from "@/components/RegistrationPlans";
+import EmailDeliveryNote from "@/components/EmailDeliveryNote";
 import Link from "next/link";
 import React from "react";
 import { Sparkles } from "lucide-react";
@@ -30,10 +31,13 @@ const Registration = () => {
               Registration
             </span>
           </h1>
-          <p className="text-lg text-slate-600 dark:text-slate-300 max-w-2xl mx-auto">
+          <p className="text-lg text-slate-600 dark:text-slate-300 max-w-2xl mx-auto mb-8">
             Choose your participation plan and join us for an enriching
             experience.
           </p>
+          <div className="max-w-3xl mx-auto text-left">
+            <EmailDeliveryNote />
+          </div>
         </div>
 
         {/* Registration Plans */}
