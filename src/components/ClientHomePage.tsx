@@ -144,6 +144,51 @@ const ClientHomePage = () => {
               delay={0.2}
             />
           </motion.div>
+
+          {/* Important Dates Section */}
+          <motion.div
+            variants={containerVariants}
+            className="mt-20 w-full max-w-4xl mx-auto px-4"
+          >
+            <div className="relative group p-8 rounded-3xl bg-white/40 dark:bg-slate-900/40 backdrop-blur-md border border-white/20 dark:border-slate-700/30 shadow-xl overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/5 to-purple-500/5" />
+              <h2 className="text-3xl font-bold text-center mb-8 text-slate-900 dark:text-white">
+                Important Dates
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {[
+                  {
+                    label: "Abstract Submission",
+                    date: "31st December, 2025",
+                  },
+                  {
+                    label: "Pharma Innovator Award",
+                    date: "31st December, 2025",
+                  },
+                  {
+                    label: "Intimation of Abstract",
+                    date: "5th January 2026",
+                  },
+                  {
+                    label: "Registration (Paper Presenter)",
+                    date: "7th January, 2026",
+                  },
+                ].map((item, index) => (
+                  <div
+                    key={index}
+                    className="flex justify-between items-center p-4 rounded-xl bg-white/50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700"
+                  >
+                    <span className="font-semibold text-slate-700 dark:text-slate-300">
+                      {item.label}
+                    </span>
+                    <span className="font-bold text-indigo-600 dark:text-indigo-400">
+                      {item.date}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </motion.div>
         </motion.div>
       </main>
 
