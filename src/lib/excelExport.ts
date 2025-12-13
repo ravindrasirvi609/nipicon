@@ -70,7 +70,7 @@ export const exportToExcel = (
     Country: item.country,
     "Payment Status": item.paymentStatus,
     "Payment Amount": item.paymentAmount,
-    "UTR Number": item.utrNumber,
+    "UTR Number": item.transactionId || item.utrNumber,
     "Bank Name": item.bankName,
     "Branch Name": item.branchName,
     "Payment Date": item.paymentDate

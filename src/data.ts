@@ -474,10 +474,21 @@ export const bankDetails = {
 
 // Helper function to get category code from registration type
 export const getCategoryCode = (registrationType: string): string => {
+  if (!registrationType) return "XX";
+  const normalizedType = registrationType.trim();
+
+  // Handle aliases and common variations
+  const typeLower = normalizedType.toLowerCase();
+
+  // Specific mappings requested or implied
+  if (typeLower === "faculty") return "AF"; // Map Faculty to Academicians code
+  if (typeLower === "ug") return "SU"; // Map UG to UG Student code
+  if (typeLower === "pgphd") return "SP"; // Map PGPhD to PG/PhD Student code
+
   const category = registrationCategories.find(
     (cat) =>
-      cat.label.toLowerCase() === registrationType?.toLowerCase() ||
-      cat.value === registrationType
+      cat.label.toLowerCase() === typeLower ||
+      cat.value === normalizedType
   );
   return category?.code || "XX";
 };

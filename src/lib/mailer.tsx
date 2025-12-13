@@ -36,11 +36,13 @@ export const sendEmail = async ({
     }
 
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+    const infoUrl = "http://pharmacy.nirmauni.ac.in/nipicon";
 
     let abstract;
     let registration;
     let submissionDetailsUrl: string;
     let EMAIL: string;
+    let signature: React.ReactNode;
 
     if (emailType === "REGISTRATION_SUCCESS") {
       registration = await RegistrationModel.findOne({ _id });
@@ -49,6 +51,15 @@ export const sendEmail = async ({
       }
       submissionDetailsUrl = `${baseUrl}/abstractForm/${registration._id}`;
       EMAIL = registration.email;
+      signature = (
+        <>
+          <Text>
+            Best Regards,<br />
+            <strong>Registration Committee - NIPiCON 2026</strong><br />
+            Email: <a href="mailto:regis.nipicon@nirmauni.ac.in">regis.nipicon@nirmauni.ac.in</a>
+          </Text>
+        </>
+      );
     } else {
       abstract = await AbstractModel.findOne({ _id });
       if (!abstract) {
@@ -56,6 +67,15 @@ export const sendEmail = async ({
       }
       submissionDetailsUrl = `${baseUrl}/abstractForm/${abstract._id}`;
       EMAIL = abstract.email;
+      signature = (
+        <>
+          <Text>
+            Best Regards,<br />
+            <strong>Abstract Committee - NIPiCON 2026</strong><br />
+            Email: <a href="mailto:abs.nipicon@nirmauni.ac.in">abs.nipicon@nirmauni.ac.in</a>
+          </Text>
+        </>
+      );
     }
 
     let content: React.ReactNode;
@@ -66,7 +86,8 @@ export const sendEmail = async ({
     if (emailType === "SUBMITTED") {
       content = (
         <>
-          <Text>Thank you for your submission!</Text>
+          <Text>Greeting from Institute of Pharmacy, Nirma University...!!!</Text>
+          <Text>Thanks for Submitting Abstract for 8th NIPiCON 2026.</Text>
           <Text>
             Your abstract has been successfully submitted. Your temporary
             abstract code is: <strong>{abstract.temporyAbstractCode}</strong>
@@ -84,9 +105,13 @@ export const sendEmail = async ({
             <a href={submissionDetailsUrl}>{submissionDetailsUrl}</a>
           </Text>
           <Text>
+            Stay updated with more information - <a href={infoUrl}>{infoUrl}</a>
+          </Text>
+          <Text>
             You will receive an email notification whenever there is an update
             to your abstract status.
           </Text>
+          {signature}
         </>
       );
       subject = `Abstract Submission Confirmation - ${abstract.temporyAbstractCode}`;
@@ -133,6 +158,7 @@ export const sendEmail = async ({
 
       content = (
         <>
+          <Text>Greeting from Institute of Pharmacy, Nirma University...!!!</Text>
           <Text>
             There has been an update to your abstract submission (Code:{" "}
             <strong>{codeToShow}</strong>).
@@ -155,9 +181,13 @@ export const sendEmail = async ({
             <a href={submissionDetailsUrl}>{submissionDetailsUrl}</a>
           </Text>
           <Text>
+            Stay updated with more information - <a href={infoUrl}>{infoUrl}</a>
+          </Text>
+          <Text>
             You will receive an email notification whenever there is an update
             to your abstract status.
           </Text>
+          {signature}
         </>
       );
       subject = `Abstract ${statusForSubject} - ${codeToShow}`;
@@ -166,7 +196,9 @@ export const sendEmail = async ({
     } else if (emailType === "REGISTRATION_SUCCESS") {
       content = (
         <>
+          <Text>Greeting from Institute of Pharmacy, Nirma University...!!!</Text>
           <Text>Dear {registration.name},</Text>
+          <Text>Thanks for Registration for 8th NIPiCON 2026.</Text>
           {registration.registrationStatus === "Confirmed" ||
             registration.paymentStatus === "Completed" ? (
             <Text>
@@ -205,9 +237,13 @@ export const sendEmail = async ({
             <a href={submissionDetailsUrl}>{submissionDetailsUrl}</a>
           </Text>
           <Text>
+            Stay updated with more information - <a href={infoUrl}>{infoUrl}</a>
+          </Text>
+          <Text>
             You will receive an email notification whenever there is an update
             to your registration status.
           </Text>
+          {signature}
         </>
       );
       subject = `Registration Successful${registration.registrationCode ? ` - ${registration.registrationCode}` : ""}`;
@@ -258,6 +294,7 @@ export const sendEmail = async ({
 
       content = (
         <>
+          <Text>Greeting from Institute of Pharmacy, Nirma University...!!!</Text>
           <Text>
             There has been an update to your presentation submission (Abstract
             Code: <strong>{codeToShow}</strong>).
@@ -275,9 +312,13 @@ export const sendEmail = async ({
             <a href={submissionDetailsUrl}>{submissionDetailsUrl}</a>
           </Text>
           <Text>
+            Stay updated with more information - <a href={infoUrl}>{infoUrl}</a>
+          </Text>
+          <Text>
             You will receive an email notification whenever there is an update
             to your abstract status.
           </Text>
+          {signature}
         </>
       );
       subject = `Presentation Status Update - ${codeToShow}`;
