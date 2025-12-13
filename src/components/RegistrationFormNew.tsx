@@ -585,7 +585,6 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
                 onChange={onInputChange}
                 required
                 className={inputClasses}
-                defaultValue="India"
               />
               {errors.country && (
                 <p className="text-red-500 text-sm mt-1">{errors.country}</p>

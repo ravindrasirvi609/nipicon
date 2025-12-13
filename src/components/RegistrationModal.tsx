@@ -34,7 +34,7 @@ const RegistrationModal: React.FC<RegistrationModalProps> = ({
     city: "",
     state: "",
     pincode: "",
-    country: "",
+    country: "India",
     registrationType: "",
     applyingAs: "Individual",
     registeringAs: "Delegate",
