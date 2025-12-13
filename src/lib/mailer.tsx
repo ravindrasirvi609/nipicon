@@ -168,7 +168,7 @@ export const sendEmail = async ({
         <>
           <Text>Dear {registration.name},</Text>
           {registration.registrationStatus === "Confirmed" ||
-          registration.paymentStatus === "Completed" ? (
+            registration.paymentStatus === "Completed" ? (
             <Text>
               We are pleased to inform you that your registration for the
               conference has been successfully confirmed.
@@ -307,7 +307,7 @@ export const sendEmail = async ({
         Authorization: `Bearer ${apiKey}`,
       },
       body: JSON.stringify({
-        from: "NIPiCON <dev@ravindrachoudhary.in>",
+        from: "NIPiCON <no-reply@opf.org.in>",
         to: [EMAIL],
         subject: subject,
         html: emailHtml,
@@ -324,8 +324,7 @@ export const sendEmail = async ({
   } catch (error) {
     console.error("Error sending email:", error);
     throw new Error(
-      `Failed to send email: ${
-        error instanceof Error ? error.message : String(error)
+      `Failed to send email: ${error instanceof Error ? error.message : String(error)
       }`
     );
   }
