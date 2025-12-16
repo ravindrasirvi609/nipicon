@@ -59,6 +59,15 @@ export interface RegistrationInfo {
     articleType?: string;
     presentationFileStatus?: string;
     presentationFileUrl?: string;
+    isPharmaInnovatorAward?: boolean;
+    supervisorName?: string;
+    supervisorDesignation?: string;
+    supervisorAffiliation?: string;
+    supervisorEmail?: string;
+    supervisorContact?: string;
+    supervisorAddress?: string;
+    declarationFormUrl?: string;
+    briefProfileUrl?: string;
   };
 
   registration: {
@@ -118,4 +127,13 @@ export interface Abstract {
   presentationFileUrl?: string;
   presentationFileStatus?: string;
   presentationRejectionComment?: string;
+  isPharmaInnovatorAward?: boolean;
+  supervisorName?: string;
+  supervisorDesignation?: string;
+  supervisorAffiliation?: string;
+  supervisorEmail?: string;
+  supervisorContact?: string;
+  supervisorAddress?: string;
+  declarationFormUrl?: string;
+  briefProfileUrl?: string;
 }

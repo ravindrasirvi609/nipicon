@@ -154,12 +154,11 @@ export function AbstractForm() {
     } else if (abstractFile.size > 5 * 1024 * 1024) {
       newErrors.abstractFile = "Abstract file must be less than 5 MB";
     } else if (
-      ![
-        "application/msword",
+      !["application/msword",
         "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
       ].includes(abstractFile.type)
     ) {
-      newErrors.abstractFile = "Only document files are allowed";
+      newErrors.abstractFile = "Only document files (DOC, DOCX) are allowed";
     }
     if (!declarationAccepted) {
       newErrors.declaration = "You must accept the declaration";

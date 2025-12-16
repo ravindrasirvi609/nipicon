@@ -146,9 +146,8 @@ const AbstractForm: React.FC = () => {
     fullWidth?: boolean;
   }) => (
     <div
-      className={`mb-4 p-4 bg-white rounded-lg border border-gray-100 shadow-sm hover:shadow-md transition-shadow duration-200 ${
-        fullWidth ? "col-span-full" : ""
-      }`}
+      className={`mb-4 p-4 bg-white rounded-lg border border-gray-100 shadow-sm hover:shadow-md transition-shadow duration-200 ${fullWidth ? "col-span-full" : ""
+        }`}
     >
       <span className="block text-sm font-medium text-gray-500 mb-1">
         {label}
@@ -202,9 +201,8 @@ const AbstractForm: React.FC = () => {
               <div className="space-y-4">
                 <InfoItem
                   label="Full Name"
-                  value={`${registration?.Salutations || ""} ${
-                    registration?.name || abstract?.name
-                  }`}
+                  value={`${registration?.Salutations || ""} ${registration?.name || abstract?.name
+                    }`}
                   fullWidth
                 />
                 <InfoItem
@@ -317,13 +315,12 @@ const AbstractForm: React.FC = () => {
                   label="Status"
                   value={
                     <span
-                      className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
-                        registration?.paymentStatus === "Completed"
-                          ? "bg-green-100 text-green-800"
-                          : registration?.paymentStatus === "Failed"
-                            ? "bg-red-100 text-red-800"
-                            : "bg-yellow-100 text-yellow-800"
-                      }`}
+                      className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${registration?.paymentStatus === "Completed"
+                        ? "bg-green-100 text-green-800"
+                        : registration?.paymentStatus === "Failed"
+                          ? "bg-red-100 text-red-800"
+                          : "bg-yellow-100 text-yellow-800"
+                        }`}
                     >
                       {registration?.paymentStatus}
                     </span>
@@ -401,13 +398,12 @@ const AbstractForm: React.FC = () => {
                     label="Status"
                     value={
                       <span
-                        className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
-                          abstract.Status === "Pending"
-                            ? "bg-yellow-100 text-yellow-800"
-                            : abstract.Status === "Accepted"
-                              ? "bg-green-100 text-green-800"
-                              : "bg-red-100 text-red-800"
-                        }`}
+                        className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${abstract.Status === "Pending"
+                          ? "bg-yellow-100 text-yellow-800"
+                          : abstract.Status === "Accepted"
+                            ? "bg-green-100 text-green-800"
+                            : "bg-red-100 text-red-800"
+                          }`}
                       >
                         {abstract.Status}
                       </span>
@@ -453,41 +449,40 @@ const AbstractForm: React.FC = () => {
                   {/* Rejection/Revision Logic */}
                   {(abstract.Status === "Revision" ||
                     abstract.Status === "Rejected") && (
-                    <div className="col-span-full mt-6 p-6 bg-red-50 rounded-xl border border-red-100">
-                      <h3 className="text-lg font-bold text-red-800 mb-4">
-                        Re-upload Abstract
-                      </h3>
-                      <div
-                        {...getRootPropsAbstract()}
-                        className={`w-full p-8 border-2 border-dashed rounded-xl text-center cursor-pointer transition-all duration-200 ${
-                          isDragActiveAbstract
+                      <div className="col-span-full mt-6 p-6 bg-red-50 rounded-xl border border-red-100">
+                        <h3 className="text-lg font-bold text-red-800 mb-4">
+                          Re-upload Abstract
+                        </h3>
+                        <div
+                          {...getRootPropsAbstract()}
+                          className={`w-full p-8 border-2 border-dashed rounded-xl text-center cursor-pointer transition-all duration-200 ${isDragActiveAbstract
                             ? "border-red-500 bg-red-100"
                             : "border-red-300 hover:border-red-500 hover:bg-white"
-                        }`}
-                      >
-                        <input {...getInputPropsAbstract()} />
-                        <p className="text-gray-700 font-medium">
-                          {isDragActiveAbstract
-                            ? "Drop the file here..."
-                            : "Drag & drop your revised abstract file here"}
-                        </p>
-                      </div>
-
-                      {abstractFile && (
-                        <div className="mt-3 text-sm text-gray-600 font-medium">
-                          Selected: {abstractFile.name}
+                            }`}
+                        >
+                          <input {...getInputPropsAbstract()} />
+                          <p className="text-gray-700 font-medium">
+                            {isDragActiveAbstract
+                              ? "Drop the file here..."
+                              : "Drag & drop your revised abstract file here"}
+                          </p>
                         </div>
-                      )}
 
-                      <button
-                        onClick={handleFileUpload}
-                        disabled={!abstractFile || isUploading}
-                        className="mt-4 w-full bg-red-600 text-white py-3 px-6 rounded-lg hover:bg-red-700 transition-colors disabled:opacity-50 font-medium"
-                      >
-                        {isUploading ? "Uploading..." : "Upload Revision"}
-                      </button>
-                    </div>
-                  )}
+                        {abstractFile && (
+                          <div className="mt-3 text-sm text-gray-600 font-medium">
+                            Selected: {abstractFile.name}
+                          </div>
+                        )}
+
+                        <button
+                          onClick={handleFileUpload}
+                          disabled={!abstractFile || isUploading}
+                          className="mt-4 w-full bg-red-600 text-white py-3 px-6 rounded-lg hover:bg-red-700 transition-colors disabled:opacity-50 font-medium"
+                        >
+                          {isUploading ? "Uploading..." : "Upload Revision"}
+                        </button>
+                      </div>
+                    )}
 
                   {/* Presentation File Logic */}
                   {abstract.Status === "Accepted" &&
@@ -502,14 +497,13 @@ const AbstractForm: React.FC = () => {
                             label="Presentation Status"
                             value={
                               <span
-                                className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
-                                  !abstract.presentationFileStatus
-                                    ? "bg-yellow-100 text-yellow-800"
-                                    : abstract.presentationFileStatus ===
-                                        "Approved"
-                                      ? "bg-green-100 text-green-800"
-                                      : "bg-blue-100 text-blue-800"
-                                }`}
+                                className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${!abstract.presentationFileStatus
+                                  ? "bg-yellow-100 text-yellow-800"
+                                  : abstract.presentationFileStatus ===
+                                    "Approved"
+                                    ? "bg-green-100 text-green-800"
+                                    : "bg-blue-100 text-blue-800"
+                                  }`}
                               >
                                 {abstract.presentationFileStatus ||
                                   "Not Uploaded"}
@@ -544,11 +538,10 @@ const AbstractForm: React.FC = () => {
                               </h4>
                               <div
                                 {...getRootPropsPpt()}
-                                className={`w-full p-6 border-2 border-dashed rounded-lg text-center cursor-pointer transition-colors duration-200 ${
-                                  isDragActivePpt
-                                    ? "border-indigo-500 bg-indigo-50"
-                                    : "border-gray-300 hover:border-indigo-500 hover:bg-white"
-                                }`}
+                                className={`w-full p-6 border-2 border-dashed rounded-lg text-center cursor-pointer transition-colors duration-200 ${isDragActivePpt
+                                  ? "border-indigo-500 bg-indigo-50"
+                                  : "border-gray-300 hover:border-indigo-500 hover:bg-white"
+                                  }`}
                               >
                                 <input {...getInputPropsPpt()} />
                                 <p className="text-gray-600">
@@ -583,7 +576,52 @@ const AbstractForm: React.FC = () => {
                 </div>
               </div>
             )}
+            {abstract && abstract.isPharmaInnovatorAward && (
+              <div className="bg-white rounded-2xl shadow-lg p-6">
+                <SectionTitle>Pharma Innovator Award Details</SectionTitle>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="col-span-full">
+                    <h3 className="text-lg font-semibold text-gray-700 mb-3">Supervisor Information</h3>
+                  </div>
+                  <InfoItem label="Name" value={abstract.supervisorName} />
+                  <InfoItem label="Designation" value={abstract.supervisorDesignation} />
+                  <InfoItem label="Affiliation" value={abstract.supervisorAffiliation} fullWidth />
+                  <InfoItem label="Email" value={abstract.supervisorEmail} />
+                  <InfoItem label="Contact" value={abstract.supervisorContact} />
+                  <InfoItem label="Address" value={abstract.supervisorAddress} fullWidth />
+
+                  <div className="col-span-full mt-4">
+                    <h3 className="text-lg font-semibold text-gray-700 mb-3">Documents</h3>
+                    <div className="flex flex-wrap gap-4">
+                      {abstract.declarationFormUrl && (
+                        <a
+                          href={abstract.declarationFormUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center px-4 py-2 bg-purple-50 text-purple-700 rounded-lg hover:bg-purple-100 transition-colors"
+                        >
+                          <FaFileDownload className="mr-2" />
+                          Download Declaration Form
+                        </a>
+                      )}
+                      {abstract.briefProfileUrl && (
+                        <a
+                          href={abstract.briefProfileUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center px-4 py-2 bg-orange-50 text-orange-700 rounded-lg hover:bg-orange-100 transition-colors"
+                        >
+                          <FaFileDownload className="mr-2" />
+                          Download Brief Profile
+                        </a>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
+          {/* End of Right Column */}
         </div>
       </div>
     </div>

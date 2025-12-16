@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from "react";
 import Link from "next/link";
-import { Eye, Download, MoreVertical, Award, Globe } from "lucide-react";
+import { Eye, Download, MoreVertical, Award, Globe, FileText, User } from "lucide-react";
 import FileViewerModal from "./FileViewerModal";
 import RejectPopup from "./RejectPopup";
 import { designationOptions, tracks, getTrackCode } from "@/data";
@@ -401,6 +401,28 @@ const AbstractTable: React.FC<AbstractTableProps> = ({
                   >
                     <Download size={16} />
                   </button>
+                  {abstract.isPharmaInnovatorAward && (
+                    <>
+                      {abstract.declarationFormUrl && (
+                        <button
+                          onClick={() => window.open(abstract.declarationFormUrl, "_blank")}
+                          className="bg-purple-500 hover:bg-purple-600 text-white rounded-full p-2 mx-1"
+                          title="Download Declaration"
+                        >
+                          <FileText size={16} />
+                        </button>
+                      )}
+                      {abstract.briefProfileUrl && (
+                        <button
+                          onClick={() => window.open(abstract.briefProfileUrl, "_blank")}
+                          className="bg-orange-500 hover:bg-orange-600 text-white rounded-full p-2 mx-1"
+                          title="Download Profile"
+                        >
+                          <User size={16} />
+                        </button>
+                      )}
+                    </>
+                  )}
                   <button
                     onClick={() =>
                       setStatusModal({ isOpen: true, abstractId: abstract._id })

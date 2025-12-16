@@ -99,7 +99,7 @@ export async function POST(req: NextRequest) {
       coAuthor,
       designation,
       title,
-      subject,
+      subject: isPharmaInnovatorAward ? "Pharma Innovator Award" : subject,
       abstractFileUrl: file,
       address,
       city,
