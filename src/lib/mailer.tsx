@@ -127,6 +127,7 @@ export const sendEmail = async ({
         statusSpecificContent = (
           <>
             <Text>Congratulations! Your abstract has been accepted.</Text>
+            <Text>Complete your registration at the earliest.</Text>
             <Text>
               Your official abstract Presentation code is:{" "}
               <strong>{abstract.AbstractCode}</strong>
@@ -147,6 +148,7 @@ export const sendEmail = async ({
               guidelines and reviewer comments. Please resubmit the abstract by
               clicking View Submission Details.
             </Text>
+            <Text>Submit your revised abstract in 2 days.</Text>
             <Text>
               <strong>
                 Reviewer Committee Comments: {abstract.rejectionComment}
