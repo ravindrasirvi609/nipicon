@@ -149,6 +149,25 @@ export const sendEmail = async ({
               clicking View Submission Details.
             </Text>
             <Text>Submit your revised abstract in 2 days.</Text>
+            {abstract.isDeclarationRevisionRequested && (
+              <Text>
+                Dr. Niyati has observed that Many Applicants of PIA had NOT
+                uploaded Declaration Form as per Format & Guidelines - And,
+                Hence, Please resubmit the Declaration Form As per Guideline &
+                Format.
+              </Text>
+            )}
+            {abstract.isProfileRevisionRequested && (
+              <Text>
+                Please resubmit your Brief Profile/CV in the prescribed format.
+              </Text>
+            )}
+            {abstract.isAbstractRevisionRequested && (
+              <Text>
+                Please resubmit your abstract in WORD File format as per
+                guidelines.
+              </Text>
+            )}
             <Text>
               <strong>
                 Reviewer Committee Comments: {abstract.rejectionComment}
@@ -341,7 +360,7 @@ export const sendEmail = async ({
       throw new Error(`Invalid email format: ${EMAIL}`);
     }
 
-    const emailHtml = await render(content);
+    const emailHtml = await render(content as React.ReactElement);
 
     const response = await fetch("https://api.resend.com/emails", {
       method: "POST",

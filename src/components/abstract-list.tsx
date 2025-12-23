@@ -66,7 +66,12 @@ export function AbstractList() {
     abstractId: string,
     newStatus: string,
     comment?: string,
-    presentationType?: string
+    presentationType?: string,
+    revisions?: {
+      abstract: boolean;
+      declaration: boolean;
+      profile: boolean;
+    }
   ) => {
     try {
       const response = await fetch(`/api/updateStatus?id=${abstractId}`, {
@@ -79,6 +84,7 @@ export function AbstractList() {
           _id: abstractId,
           comment,
           presentationType,
+          revisions,
         }),
       });
 
@@ -219,9 +225,12 @@ export function AbstractList() {
 
     // Apply sorting
     result.sort((a, b) => {
-      if (a[filters.sortBy] < b[filters.sortBy])
+      const valA = a[filters.sortBy] ?? "";
+      const valB = b[filters.sortBy] ?? "";
+
+      if (valA < valB)
         return filters.sortOrder === "asc" ? -1 : 1;
-      if (a[filters.sortBy] > b[filters.sortBy])
+      if (valA > valB)
         return filters.sortOrder === "asc" ? 1 : -1;
       return 0;
     });
@@ -289,8 +298,8 @@ export function AbstractList() {
             <div
               key={track.code}
               className={`p-3 rounded-lg border cursor-pointer transition-all ${filters.track === track.code
-                  ? "ring-2 ring-[#034C8C] bg-blue-50 border-blue-300"
-                  : "bg-gray-50 hover:bg-gray-100 border-gray-200"
+                ? "ring-2 ring-[#034C8C] bg-blue-50 border-blue-300"
+                : "bg-gray-50 hover:bg-gray-100 border-gray-200"
                 }`}
               onClick={() =>
                 setFilters((prev) => ({

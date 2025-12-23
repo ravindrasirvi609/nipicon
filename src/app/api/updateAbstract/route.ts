@@ -8,18 +8,12 @@ export async function PATCH(req: NextRequest) {
   try {
     // Parse the request body
     const body = await req.json();
-    const { _id, abstractFileUrl } = body;
+    const { _id, abstractFileUrl, declarationFormUrl, briefProfileUrl } = body;
 
     // Validate input
-    if (!_id || !abstractFileUrl) {
-      console.error(
-        "Missing _id or abstractFileUrl in the request body:",
-        body
-      );
-      return NextResponse.json(
-        { message: "Missing _id or abstractFileUrl" },
-        { status: 400 }
-      );
+    if (!_id) {
+      console.error("Missing _id in the request body:", body);
+      return NextResponse.json({ message: "Missing _id" }, { status: 400 });
     }
 
     // Find the abstract
@@ -33,8 +27,28 @@ export async function PATCH(req: NextRequest) {
     }
 
     // Update the abstract
-    abstract.Status = "InReview";
-    abstract.abstractFileUrl = abstractFileUrl;
+    if (abstractFileUrl) {
+      abstract.abstractFileUrl = abstractFileUrl;
+      abstract.isAbstractRevisionRequested = false;
+    }
+    if (declarationFormUrl) {
+      abstract.declarationFormUrl = declarationFormUrl;
+      abstract.isDeclarationRevisionRequested = false;
+    }
+    if (briefProfileUrl) {
+      abstract.briefProfileUrl = briefProfileUrl;
+      abstract.isProfileRevisionRequested = false;
+    }
+
+    // Only set to InReview if NO MORE revisions are requested
+    if (
+      !abstract.isAbstractRevisionRequested &&
+      !abstract.isDeclarationRevisionRequested &&
+      !abstract.isProfileRevisionRequested
+    ) {
+      abstract.Status = "InReview";
+    }
+
     abstract.updatedAt = new Date(); // Update the timestamp
 
     // Save the changes

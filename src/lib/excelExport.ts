@@ -139,6 +139,9 @@ export interface Abstract {
   supervisorContact: string;
   declarationFormUrl: string;
   briefProfileUrl: string;
+  isAbstractRevisionRequested?: boolean;
+  isDeclarationRevisionRequested?: boolean;
+  isProfileRevisionRequested?: boolean;
 }
 
 export const exportAbstractsToExcel = (

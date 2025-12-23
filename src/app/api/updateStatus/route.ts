@@ -8,7 +8,8 @@ connect();
 
 export async function PATCH(req: NextRequest) {
   try {
-    const { status, _id, comment, presentationType } = await req.json();
+    const { status, _id, comment, presentationType, revisions } =
+      await req.json();
 
     if (!_id || !status) {
       console.error("Missing _id or status in the request");
@@ -34,6 +35,11 @@ export async function PATCH(req: NextRequest) {
     // Add comment if status is Revision
     if (status === "Revision") {
       abstract.rejectionComment = comment;
+      if (revisions) {
+        abstract.isAbstractRevisionRequested = !!revisions.abstract;
+        abstract.isDeclarationRevisionRequested = !!revisions.declaration;
+        abstract.isProfileRevisionRequested = !!revisions.profile;
+      }
     }
 
     if (status === "Accepted") {

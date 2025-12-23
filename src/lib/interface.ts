@@ -68,6 +68,9 @@ export interface RegistrationInfo {
     supervisorAddress?: string;
     declarationFormUrl?: string;
     briefProfileUrl?: string;
+    isAbstractRevisionRequested?: boolean;
+    isDeclarationRevisionRequested?: boolean;
+    isProfileRevisionRequested?: boolean;
   };
 
   registration: {
@@ -136,4 +139,7 @@ export interface Abstract {
   supervisorAddress?: string;
   declarationFormUrl?: string;
   briefProfileUrl?: string;
+  isAbstractRevisionRequested?: boolean;
+  isDeclarationRevisionRequested?: boolean;
+  isProfileRevisionRequested?: boolean;
 }

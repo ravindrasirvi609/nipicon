@@ -22,7 +22,12 @@ interface AbstractTableProps {
     abstractId: string,
     newStatus: string,
     comment?: string,
-    presentationType?: string
+    presentationType?: string,
+    revisions?: {
+      abstract: boolean;
+      declaration: boolean;
+      profile: boolean;
+    }
   ) => Promise<void>;
   handlePresentationStatusUpdate: (
     abstractId: string,
@@ -125,9 +130,18 @@ const AbstractTable: React.FC<AbstractTableProps> = ({
   );
 
   const handleReject = useCallback(
-    async (comment: string) => {
+    async (
+      comment: string,
+      revisions: { abstract: boolean; declaration: boolean; profile: boolean }
+    ) => {
       if (rejectPopup.abstractId) {
-        await handleStatusUpdate(rejectPopup.abstractId, "Revision", comment);
+        await handleStatusUpdate(
+          rejectPopup.abstractId,
+          "Revision",
+          comment,
+          undefined,
+          revisions
+        );
         setRejectPopup({ isOpen: false, abstractId: null });
       }
     },

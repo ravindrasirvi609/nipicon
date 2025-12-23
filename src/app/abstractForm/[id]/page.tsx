@@ -20,9 +20,15 @@ const AbstractForm: React.FC = () => {
   const {
     uploadFile,
     uploadProgress,
-    isUploading,
+    isUploading: isFirebaseUploading,
     error: uploadError,
   } = useFirebaseStorage();
+
+  const [upStatus, setUpStatus] = useState<
+    "abstract" | "declaration" | "profile" | "presentation" | null
+  >(null);
+
+  const isUploading = !!upStatus;
 
   useEffect(() => {
     const fetchData = async () => {
@@ -59,6 +65,35 @@ const AbstractForm: React.FC = () => {
   });
 
   const {
+    getRootProps: getRootPropsDeclaration,
+    getInputProps: getInputPropsDeclaration,
+    isDragActive: isDragActiveDeclaration,
+  } = useDropzone({
+    onDrop: (acceptedFiles: File[]) => {
+      setDeclarationFile(acceptedFiles[0]);
+    },
+    accept: {
+      "application/pdf": [".pdf"],
+      "image/*": [".png", ".jpg", ".jpeg"],
+    },
+    maxSize: 5 * 1024 * 1024,
+  });
+
+  const {
+    getRootProps: getRootPropsProfile,
+    getInputProps: getInputPropsProfile,
+    isDragActive: isDragActiveProfile,
+  } = useDropzone({
+    onDrop: (acceptedFiles: File[]) => {
+      setProfileFile(acceptedFiles[0]);
+    },
+    accept: {
+      "application/pdf": [".pdf"],
+    },
+    maxSize: 5 * 1024 * 1024,
+  });
+
+  const {
     getRootProps: getRootPropsPpt,
     getInputProps: getInputPropsPpt,
     isDragActive: isDragActivePpt,
@@ -78,6 +113,7 @@ const AbstractForm: React.FC = () => {
     if (!abstractFile || !registrationInfo) return;
 
     try {
+      setUpStatus("abstract");
       const downloadURL = await uploadFile(abstractFile);
       const updateRes = await fetch("/api/updateAbstract", {
         method: "PATCH",
@@ -91,11 +127,70 @@ const AbstractForm: React.FC = () => {
           ...prevState!,
           abstract: updatedData.abstract,
         }));
+        setAbstractFile(null);
+        alert("Abstract updated successfully!");
       } else {
         throw new Error("Failed to update abstract");
       }
     } catch (error) {
       console.error("Failed to upload file or update abstract:", error);
+    } finally {
+      setUpStatus(null);
+    }
+  };
+
+  const [declarationFile, setDeclarationFile] = useState<File | null>(null);
+  const [profileFile, setProfileFile] = useState<File | null>(null);
+
+  const handleDeclarationUpload = async () => {
+    if (!declarationFile || !registrationInfo) return;
+    try {
+      setUpStatus("declaration");
+      const downloadURL = await uploadFile(declarationFile);
+      const updateRes = await fetch("/api/updateAbstract", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ _id: id, declarationFormUrl: downloadURL }),
+      });
+      if (updateRes.ok) {
+        const updatedData = await updateRes.json();
+        setRegistrationInfo((prevState) => ({
+          ...prevState!,
+          abstract: updatedData.abstract,
+        }));
+        setDeclarationFile(null);
+        alert("Declaration Form updated successfully!");
+      }
+    } catch (error) {
+      console.error("Failed to upload declaration:", error);
+    } finally {
+      setUpStatus(null);
+    }
+  };
+
+  const handleProfileUpload = async () => {
+    if (!profileFile || !registrationInfo) return;
+    try {
+      setUpStatus("profile");
+      const downloadURL = await uploadFile(profileFile);
+      const updateRes = await fetch("/api/updateAbstract", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ _id: id, briefProfileUrl: downloadURL }),
+      });
+      if (updateRes.ok) {
+        const updatedData = await updateRes.json();
+        setRegistrationInfo((prevState) => ({
+          ...prevState!,
+          abstract: updatedData.abstract,
+        }));
+        setProfileFile(null);
+        alert("Brief Profile updated successfully!");
+      }
+    } catch (error) {
+      console.error("Failed to upload profile:", error);
+    } finally {
+      setUpStatus(null);
     }
   };
 
@@ -103,6 +198,7 @@ const AbstractForm: React.FC = () => {
     if (!presentationFile || !registrationInfo) return;
 
     try {
+      setUpStatus("presentation");
       const downloadURL = await uploadFile(presentationFile);
       const updateRes = await fetch("/api/updatePresentation", {
         method: "PATCH",
@@ -123,6 +219,8 @@ const AbstractForm: React.FC = () => {
       }
     } catch (error) {
       console.error("Failed to upload file or update presentation:", error);
+    } finally {
+      setUpStatus(null);
     }
   };
 
@@ -447,42 +545,120 @@ const AbstractForm: React.FC = () => {
                   </div>
 
                   {/* Rejection/Revision Logic */}
-                  {(abstract.Status === "Revision" ||
-                    abstract.Status === "Rejected") && (
-                      <div className="col-span-full mt-6 p-6 bg-red-50 rounded-xl border border-red-100">
-                        <h3 className="text-lg font-bold text-red-800 mb-4">
-                          Re-upload Abstract
-                        </h3>
-                        <div
-                          {...getRootPropsAbstract()}
-                          className={`w-full p-8 border-2 border-dashed rounded-xl text-center cursor-pointer transition-all duration-200 ${isDragActiveAbstract
-                            ? "border-red-500 bg-red-100"
-                            : "border-red-300 hover:border-red-500 hover:bg-white"
-                            }`}
-                        >
-                          <input {...getInputPropsAbstract()} />
-                          <p className="text-gray-700 font-medium">
-                            {isDragActiveAbstract
-                              ? "Drop the file here..."
-                              : "Drag & drop your revised abstract file here"}
-                          </p>
-                        </div>
-
-                        {abstractFile && (
-                          <div className="mt-3 text-sm text-gray-600 font-medium">
-                            Selected: {abstractFile.name}
+                  {abstract.Status === "Revision" && (
+                    <div className="col-span-full space-y-6">
+                      {/* Show Abstract re-upload if it's a standard revision OR if explicitly requested */}
+                      {(!abstract.isAbstractRevisionRequested &&
+                        !abstract.isDeclarationRevisionRequested &&
+                        !abstract.isProfileRevisionRequested) ||
+                        abstract.isAbstractRevisionRequested ? (
+                        <div className="p-6 bg-red-50 rounded-xl border border-red-100">
+                          <h3 className="text-lg font-bold text-red-800 mb-4">
+                            Re-upload Abstract (WORD File)
+                          </h3>
+                          <div
+                            {...getRootPropsAbstract()}
+                            className={`w-full p-8 border-2 border-dashed rounded-xl text-center cursor-pointer transition-all duration-200 ${isDragActiveAbstract
+                              ? "border-red-500 bg-red-100"
+                              : "border-red-300 hover:border-red-500 hover:bg-white"
+                              }`}
+                          >
+                            <input {...getInputPropsAbstract()} />
+                            <p className="text-gray-700 font-medium">
+                              {isDragActiveAbstract
+                                ? "Drop the file here..."
+                                : "Drag & drop your revised abstract file (WORD) here"}
+                            </p>
                           </div>
-                        )}
+                          {abstractFile && (
+                            <div className="mt-3 text-sm text-gray-600 font-medium">
+                              Selected: {abstractFile.name}
+                            </div>
+                          )}
+                          <button
+                            onClick={handleFileUpload}
+                            disabled={!abstractFile || isUploading}
+                            className="mt-4 w-full bg-red-600 text-white py-3 px-6 rounded-lg hover:bg-red-700 transition-colors disabled:opacity-50 font-medium"
+                          >
+                            {upStatus === "abstract" ? "Uploading..." : "Upload Revised Abstract"}
+                          </button>
+                        </div>
+                      ) : null}
 
-                        <button
-                          onClick={handleFileUpload}
-                          disabled={!abstractFile || isUploading}
-                          className="mt-4 w-full bg-red-600 text-white py-3 px-6 rounded-lg hover:bg-red-700 transition-colors disabled:opacity-50 font-medium"
-                        >
-                          {isUploading ? "Uploading..." : "Upload Revision"}
-                        </button>
-                      </div>
-                    )}
+                      {/* Specific Revisions (Declaration/Profile) */}
+                      {abstract.isDeclarationRevisionRequested && (
+                        <div className="p-6 bg-purple-50 rounded-xl border border-purple-100">
+                          <h3 className="text-lg font-bold text-purple-800 mb-4">
+                            Re-upload Declaration Form (Signed SCAN Copy)
+                          </h3>
+                          <div
+                            {...getRootPropsDeclaration()}
+                            className={`w-full p-8 border-2 border-dashed rounded-xl text-center cursor-pointer transition-all duration-200 ${isDragActiveDeclaration
+                              ? "border-purple-500 bg-purple-100"
+                              : "border-purple-300 hover:border-purple-500 hover:bg-white"
+                              }`}
+                          >
+                            <input {...getInputPropsDeclaration()} />
+                            <p className="text-gray-700 font-medium">
+                              {isDragActiveDeclaration
+                                ? "Drop the file here..."
+                                : "Drag & drop your declaration form (PDF/Image) here"}
+                            </p>
+                          </div>
+                          {declarationFile && (
+                            <div className="mt-3 text-sm text-gray-600 font-medium">
+                              Selected: {declarationFile.name}
+                            </div>
+                          )}
+                          <button
+                            onClick={handleDeclarationUpload}
+                            disabled={!declarationFile || isUploading}
+                            className="mt-4 w-full bg-purple-600 text-white py-3 px-6 rounded-lg hover:bg-purple-700 transition-colors disabled:opacity-50 font-medium"
+                          >
+                            {upStatus === "declaration"
+                              ? "Uploading..."
+                              : "Upload Revised Declaration"}
+                          </button>
+                        </div>
+                      )}
+
+                      {abstract.isProfileRevisionRequested && (
+                        <div className="p-6 bg-orange-50 rounded-xl border border-orange-100">
+                          <h3 className="text-lg font-bold text-orange-800 mb-4">
+                            Re-upload Brief Profile - CV
+                          </h3>
+                          <div
+                            {...getRootPropsProfile()}
+                            className={`w-full p-8 border-2 border-dashed rounded-xl text-center cursor-pointer transition-all duration-200 ${isDragActiveProfile
+                              ? "border-orange-500 bg-orange-100"
+                              : "border-orange-300 hover:border-orange-500 hover:bg-white"
+                              }`}
+                          >
+                            <input {...getInputPropsProfile()} />
+                            <p className="text-gray-700 font-medium">
+                              {isDragActiveProfile
+                                ? "Drop the file here..."
+                                : "Drag & drop your brief profile (PDF) here"}
+                            </p>
+                          </div>
+                          {profileFile && (
+                            <div className="mt-3 text-sm text-gray-600 font-medium">
+                              Selected: {profileFile.name}
+                            </div>
+                          )}
+                          <button
+                            onClick={handleProfileUpload}
+                            disabled={!profileFile || isUploading}
+                            className="mt-4 w-full bg-orange-600 text-white py-3 px-6 rounded-lg hover:bg-orange-700 transition-colors disabled:opacity-50 font-medium"
+                          >
+                            {upStatus === "profile"
+                              ? "Uploading..."
+                              : "Upload Revised Profile"}
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  )}
 
                   {/* Presentation File Logic */}
                   {abstract.Status === "Accepted" &&
@@ -565,7 +741,7 @@ const AbstractForm: React.FC = () => {
                                 disabled={!presentationFile || isUploading}
                                 className="mt-4 w-full bg-indigo-600 text-white py-2 px-4 rounded-lg hover:bg-indigo-700 transition-colors disabled:opacity-50"
                               >
-                                {isUploading
+                                {upStatus === "presentation"
                                   ? "Uploading..."
                                   : "Upload Presentation"}
                               </button>
