@@ -158,7 +158,7 @@ const ClientHomePage = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {[
                   {
-                    label: "Abstract Submission",
+                    label: "Abstract Submission (Resubmission allowed till 5th Jan)",
                     date: "31st December, 2025",
                   },
                   {
