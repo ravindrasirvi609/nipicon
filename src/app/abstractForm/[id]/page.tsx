@@ -287,14 +287,17 @@ const AbstractForm: React.FC = () => {
             </div>
             <div className="ml-3">
               <h3 className="text-sm font-bold text-amber-800">
-                Important Deadline Update
+                Submission Update
               </h3>
               <div className="mt-2 text-sm text-amber-700">
                 <p className="font-medium">
-                  Abstract Submission Deadline: <span className="font-bold underline">Tonight 12:00 AM (31st Dec 2025)</span>
+                  Abstract Submission Deadline: <span className="font-bold underline">31st Dec 2025 (Expired)</span>
                 </p>
                 <p className="mt-1">
-                  However, <span className="font-semibold">Resubmission / Revision</span> will be possible up to <span className="font-bold">5th Jan 2026</span>.
+                  New submissions are now <span className="text-red-600 font-bold uppercase">Closed</span>.
+                </p>
+                <p className="mt-1">
+                  However, <span className="font-semibold">Resubmission / Revision</span> for existing submissions will be possible up to <span className="font-bold">5th Jan 2026</span>.
                 </p>
               </div>
             </div>

@@ -10,6 +10,13 @@ connect();
 
 export async function POST(req: NextRequest) {
   try {
+    // Check if deadline has passed
+    if (new Date() > new Date("2026-01-01T00:00:00")) {
+      return NextResponse.json(
+        { message: "Abstract submission deadline has passed (31st Dec 2025). New submissions are no longer accepted." },
+        { status: 403 }
+      );
+    }
     const formData = await req.formData();
     const file = formData.get("abstractFile") as File;
 

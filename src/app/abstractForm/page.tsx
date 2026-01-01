@@ -45,21 +45,49 @@ const AbstractFormPage: React.FC = () => {
             </div>
             <div className="ml-3">
               <h3 className="text-sm font-bold text-amber-800">
-                Important Deadline Update
+                Submission Update
               </h3>
               <div className="mt-2 text-sm text-amber-700">
                 <p className="font-medium">
-                  Abstract Submission Deadline: <span className="font-bold underline">Tonight 12:00 AM (31st Dec 2025)</span>
+                  Abstract Submission Deadline: <span className="font-bold underline">31st Dec 2025 (Expired)</span>
                 </p>
-                <p className="mt-1">
-                  However, <span className="font-semibold">Resubmission / Revision</span> will be possible up to <span className="font-bold">5th Jan 2026</span>.
+                <p className="mt-1 text-red-600 font-bold uppercase tracking-wider">
+                  New submissions are now closed.
+                </p>
+                <p className="mt-2">
+                  <span className="font-semibold text-amber-900">Note:</span> If you have already submitted, <span className="font-semibold">Resubmission / Revision</span> is still possible up to <span className="font-bold">5th Jan 2026</span> via your unique abstract link.
                 </p>
               </div>
             </div>
           </div>
         </div>
 
-        <AbstractForm />
+        {/* Form Visibility Logic */}
+        <div className="max-w-4xl mx-auto transition-all duration-500">
+          {new Date() > new Date("2026-01-01T00:00:00") ? (
+            <div className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 dark:border-slate-700/30 p-12 text-center">
+              <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 mb-6">
+                <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m0 0v2m0-2h2m-2 0H10m11 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+              <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-4">Submission Closed</h2>
+              <p className="text-lg text-slate-600 dark:text-slate-400 max-w-lg mx-auto mb-8">
+                The window for submitting new abstracts for NIPiCON 2026 has officially closed. We thank all participants for their contributions.
+              </p>
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+                <a
+                  href="/"
+                  className="px-8 py-3 rounded-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold transition-all shadow-lg hover:shadow-indigo-500/25"
+                >
+                  Return to Home
+                </a>
+              </div>
+            </div>
+          ) : (
+            <AbstractForm />
+          )}
+        </div>
       </div>
     </div>
   );

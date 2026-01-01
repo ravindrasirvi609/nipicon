@@ -114,6 +114,15 @@ export function AbstractForm() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    // Check if deadline has passed
+    if (new Date() > new Date("2026-01-01T00:00:00")) {
+      setSubmitError("Abstract submission deadline has passed (31st Dec 2025). New submissions are no longer accepted.");
+      setIsSubmitting(false);
+      setIsLoading(false);
+      return;
+    }
+
     setIsSubmitting(true);
     setIsLoading(true);
     setSubmitError("");
@@ -1033,35 +1042,19 @@ export function AbstractForm() {
 
         <button
           type="submit"
-          className={`w-full font-bold py-4 px-6 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 ${isSubmitting || isLoading
-            ? "bg-slate-400 cursor-not-allowed"
-            : "bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white"
+          disabled={isSubmitting || isLoading || (new Date() > new Date("2026-01-01T00:00:00"))}
+          className={`w-full py-4 rounded-xl font-bold text-lg shadow-xl transition-all duration-300 transform hover:-translate-y-1 ${isSubmitting || isLoading || (new Date() > new Date("2026-01-01T00:00:00"))
+            ? "bg-slate-300 dark:bg-slate-700 cursor-not-allowed opacity-50"
+            : "bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white shadow-indigo-500/25"
             }`}
-          disabled={isSubmitting || isLoading}
         >
           {isSubmitting || isLoading ? (
-            <div className="flex items-center justify-center gap-3">
-              <svg
-                className="animate-spin h-5 w-5 text-white"
-                viewBox="0 0 24 24"
-              >
-                <circle
-                  className="opacity-25"
-                  cx="12"
-                  cy="12"
-                  r="10"
-                  stroke="currentColor"
-                  strokeWidth="4"
-                  fill="none"
-                />
-                <path
-                  className="opacity-75"
-                  fill="currentColor"
-                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                />
-              </svg>
+            <div className="flex items-center justify-center gap-2">
+              <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
               <span>{isSubmitting ? "Submitting..." : "Loading..."}</span>
             </div>
+          ) : (new Date() > new Date("2026-01-01T00:00:00")) ? (
+            "Submission Closed"
           ) : (
             "Submit Abstract"
           )}
