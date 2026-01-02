@@ -7,7 +7,8 @@ type EmailType =
   | "SUBMITTED"
   | "UPDATE_STATUS"
   | "REGISTRATION_SUCCESS"
-  | "UPDATE_PERSENTATION_STATUS";
+  | "UPDATE_PERSENTATION_STATUS"
+  | "ABSTRACT_CODE_UPDATE";
 
 interface SendEmailParams {
   _id: string;
@@ -25,6 +26,7 @@ export const sendEmail = async ({
         "UPDATE_STATUS",
         "REGISTRATION_SUCCESS",
         "UPDATE_PERSENTATION_STATUS",
+        "ABSTRACT_CODE_UPDATE",
       ].includes(emailType)
     ) {
       throw new Error("Invalid emailType");
@@ -343,6 +345,41 @@ export const sendEmail = async ({
         </>
       );
       subject = `Presentation Status Update - ${codeToShow}`;
+      buttonText = "View Submission Details";
+      buttonUrl = submissionDetailsUrl;
+    } else if (emailType === "ABSTRACT_CODE_UPDATE") {
+      content = (
+        <>
+          <Text>Greeting from Institute of Pharmacy, Nirma University...!!!</Text>
+          <Text>
+            <strong>Important Update Regarding Your Abstract Code</strong>
+          </Text>
+          <Text>
+            Your main Final Abstract Code has been updated. Please note your
+            NEW official Abstract Code:
+          </Text>
+          <Text>
+            New Abstract Code: <strong>{abstract.AbstractCode}</strong>
+          </Text>
+          <Text>
+            Please use this new code for all future correspondence and
+            reference. The previous code is no longer valid for official
+            purposes.
+          </Text>
+          <Text>
+            Presentation Type: <strong>{abstract.presentationType}</strong>
+          </Text>
+          <Text>
+            You can view your submission details here:{" "}
+            <a href={submissionDetailsUrl}>{submissionDetailsUrl}</a>
+          </Text>
+          <Text>
+            Stay updated with more information - <a href={infoUrl}>{infoUrl}</a>
+          </Text>
+          {signature}
+        </>
+      );
+      subject = `Important: New Abstract Code Updated - ${abstract.AbstractCode}`;
       buttonText = "View Submission Details";
       buttonUrl = submissionDetailsUrl;
     }
