@@ -43,16 +43,17 @@ export async function PATCH(req: NextRequest) {
     }
 
     if (status === "Accepted") {
+      if (!presentationType) {
+        return NextResponse.json(
+          { message: "Presentation type is required for accepted abstracts" },
+          { status: 400 }
+        );
+      }
       if (!abstract.AbstractCode) {
-        if (!presentationType) {
-          return NextResponse.json(
-            { message: "Presentation type is required for accepted abstracts" },
-            { status: 400 }
-          );
-        }
         const abstractCode = await generateAbstractCode(
           abstract.subject,
-          abstract.isPharmaInnovatorAward
+          abstract.isPharmaInnovatorAward,
+          presentationType
         );
         abstract.AbstractCode = abstractCode;
       }
@@ -86,37 +87,52 @@ export async function PATCH(req: NextRequest) {
 }
 async function generateAbstractCode(
   subject: string,
-  isPharmaInnovatorAward: boolean
+  isPharmaInnovatorAward: boolean,
+  presentationType: string
 ): Promise<string> {
-  let prefix = "NIP";
+  let trackCode = "NIP";
 
   if (isPharmaInnovatorAward) {
-    prefix = "PIA";
+    trackCode = "PI";
   } else {
     // Use getTrackCode from data.ts to get the prefix (e.g., NA, PC)
-    prefix = getTrackCode(subject);
+    trackCode = getTrackCode(subject);
   }
 
-  // Find the last abstract that has a Final AbstractCode starting with this prefix
-  const lastAbstract = await AbstractModel.findOne({
-    AbstractCode: { $regex: `^${prefix}` },
-  }).sort({ AbstractCode: -1 });
+  // Get presentation type indicator: O for Oral, P for Poster
+  const typeIndicator = presentationType === "Oral" ? "O" : "P";
+
+  // The full prefix is TRACKCODE + TYPE (e.g., PAO, PAP, PIO, PIP)
+  const fullPrefix = `${trackCode}${typeIndicator}`;
+
+  // Find the max sequence number used for this presentation type across ALL tracks
+  // Pattern: Any 2 chars + typeIndicator + 3 digits (e.g. ..O123)
+  const aggregationResult = await AbstractModel.aggregate([
+    {
+      $match: {
+        AbstractCode: { $regex: `^..${typeIndicator}\\d{3}$` },
+        Status: "Accepted",
+      },
+    },
+    {
+      $project: {
+        // Extract the last 3 characters as integer
+        sequence: {
+          $toInt: { $substr: ["$AbstractCode", 3, 3] }, // offset 3, length 3
+        },
+      },
+    },
+    { $sort: { sequence: -1 } },
+    { $limit: 1 },
+  ]);
 
   let sequenceNumber = 1;
 
-  if (lastAbstract && lastAbstract.AbstractCode) {
-    // Extract sequence number
-    // Format is likely PREFIX + 3 digits (e.g., NA001)
-    // We slice off the prefix length
-    const codePart = lastAbstract.AbstractCode.slice(prefix.length);
-    const lastSequence = parseInt(codePart, 10);
-
-    if (!isNaN(lastSequence)) {
-      sequenceNumber = lastSequence + 1;
-    }
+  if (aggregationResult.length > 0 && !isNaN(aggregationResult[0].sequence)) {
+    sequenceNumber = aggregationResult[0].sequence + 1;
   }
 
   const paddedSequence = sequenceNumber.toString().padStart(3, "0");
 
-  return `${prefix}${paddedSequence}`;
+  return `${fullPrefix}${paddedSequence}`;
 }
