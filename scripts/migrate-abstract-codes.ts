@@ -67,7 +67,7 @@ async function migrateAbstractCodes(isDryRun: boolean) {
     // Find all accepted abstracts with AbstractCode and presentationType
     const abstracts = await collection.find({
         Status: "Accepted",
-        AbstractCode: { $exists: true, $ne: null, $ne: "" },
+        AbstractCode: { $exists: true, $nin: [null, ""] },
         presentationType: { $in: ["Oral", "Poster"] }
     }).sort({ createdAt: 1 }).toArray() as unknown as AbstractDoc[];
 
