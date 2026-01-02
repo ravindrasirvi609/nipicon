@@ -479,7 +479,7 @@ export function AbstractList() {
           {isSortOpen && (
             <div className="absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-10">
               <div className="py-1" role="menu">
-                {["createdAt", "title", "name", "email", "Status"].map(
+                {["createdAt", "updatedAt", "title", "name", "email", "Status"].map(
                   (sortOption) => (
                     <button
                       key={sortOption}
@@ -495,8 +495,10 @@ export function AbstractList() {
                     >
                       {sortOption === "createdAt"
                         ? "Creation Date"
-                        : sortOption.charAt(0).toUpperCase() +
-                        sortOption.slice(1)}
+                        : sortOption === "updatedAt"
+                          ? "Last Updated"
+                          : sortOption.charAt(0).toUpperCase() +
+                          sortOption.slice(1)}
                     </button>
                   )
                 )}

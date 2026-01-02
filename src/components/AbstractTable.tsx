@@ -280,6 +280,8 @@ const AbstractTable: React.FC<AbstractTableProps> = ({
             <th className="py-3 px-4 text-left">Regn Code</th>
             <th className="py-3 px-4 text-left">Abstract Status</th>
             <th className="py-3 px-4 text-left">Pres. Status</th>
+            <th className="py-3 px-4 text-left">Creation Date</th>
+            <th className="py-3 px-4 text-left">Last Updated</th>
             <th className="py-3 px-4 text-left">Abstract Actions</th>
             <th className="py-3 px-4 text-left">Pres. Actions</th>
           </tr>
@@ -405,6 +407,12 @@ const AbstractTable: React.FC<AbstractTableProps> = ({
                 >
                   {abstract.presentationFileStatus || "Not Uploaded"}
                 </span>
+              </td>
+              <td className="py-3 px-4 text-left text-xs whitespace-nowrap">
+                {abstract.createdAt ? new Date(abstract.createdAt).toLocaleString() : "-"}
+              </td>
+              <td className="py-3 px-4 text-left text-xs whitespace-nowrap">
+                {abstract.updatedAt ? new Date(abstract.updatedAt).toLocaleString() : "-"}
               </td>
               <td className="py-3 px-4 text-center">
                 <div className="flex item-center justify-center">

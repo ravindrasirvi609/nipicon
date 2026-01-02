@@ -9,6 +9,7 @@ interface Registration {
   paymentStatus: string;
   registrationStatus: string;
   createdAt: string;
+  updatedAt: string;
   registrationCode: string;
   affiliation: string;
   whatsappNumber: string;
@@ -91,7 +92,10 @@ const RegistrationTable: React.FC<RegistrationTableProps> = ({
                 Mobile No.
               </th>
               <th className="px-4 py-3 text-left text-xs font-semibold text-white uppercase tracking-wider">
-                Regn Date
+                Creation Date
+              </th>
+              <th className="px-4 py-3 text-left text-xs font-semibold text-white uppercase tracking-wider">
+                Last Updated
               </th>
               {showActions && (
                 <th className="px-4 py-3 text-left text-xs font-semibold text-white uppercase tracking-wider">
@@ -114,9 +118,8 @@ const RegistrationTable: React.FC<RegistrationTableProps> = ({
               registrations.map((registration) => (
                 <React.Fragment key={registration._id}>
                   <tr
-                    className={`hover:bg-gray-50 cursor-pointer ${
-                      registration.includeGalaDinner ? "bg-pink-50" : "bg-white"
-                    } ${expandedRow === registration._id ? "bg-blue-50" : ""}`}
+                    className={`hover:bg-gray-50 cursor-pointer ${registration.includeGalaDinner ? "bg-pink-50" : "bg-white"
+                      } ${expandedRow === registration._id ? "bg-blue-50" : ""}`}
                     onClick={() =>
                       setExpandedRow(
                         expandedRow === registration._id
@@ -158,8 +161,13 @@ const RegistrationTable: React.FC<RegistrationTableProps> = ({
                     <td className="px-4 py-3 text-sm text-gray-900">
                       {registration.whatsappNumber}
                     </td>
-                    <td className="px-4 py-3 text-sm text-gray-900">
-                      {new Date(registration.createdAt).toLocaleDateString()}
+                    <td className="px-4 py-3 text-sm text-gray-900 font-mono">
+                      {new Date(registration.createdAt).toLocaleString()}
+                    </td>
+                    <td className="px-4 py-3 text-sm text-gray-900 font-mono">
+                      {registration.updatedAt
+                        ? new Date(registration.updatedAt).toLocaleString()
+                        : "-"}
                     </td>
                     {showActions && (
                       <td

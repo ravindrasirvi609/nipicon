@@ -28,6 +28,10 @@ export default function RegistrationList() {
     type: "success" | "error";
     message: string;
   } | null>(null);
+  const [sortConfig, setSortConfig] = useState<{
+    key: string;
+    direction: "asc" | "desc";
+  }>({ key: "createdAt", direction: "desc" }); // Default sort by newest first
 
   const fetchRegistrations = async () => {
     try {
@@ -68,8 +72,25 @@ export default function RegistrationList() {
       filtered = filtered.filter((reg) => reg.paymentStatus === paymentFilter);
     }
 
+    // Apply sorting
+    filtered.sort((a, b) => {
+      const aValue = a[sortConfig.key];
+      const bValue = b[sortConfig.key];
+
+      if (!aValue) return 1;
+      if (!bValue) return -1;
+
+      if (aValue < bValue) {
+        return sortConfig.direction === "asc" ? -1 : 1;
+      }
+      if (aValue > bValue) {
+        return sortConfig.direction === "asc" ? 1 : -1;
+      }
+      return 0;
+    });
+
     setFilteredRegistrations(filtered);
-  }, [searchTerm, registrations, categoryFilter, paymentFilter]);
+  }, [searchTerm, registrations, categoryFilter, paymentFilter, sortConfig]);
 
   // Calculate category-wise statistics
   const categoryStats = useMemo(() => {
@@ -188,6 +209,13 @@ export default function RegistrationList() {
     setSearchTerm(e.target.value);
   };
 
+  const handleSortChange = (key: string) => {
+    setSortConfig((prev) => ({
+      key,
+      direction: prev.key === key && prev.direction === "asc" ? "desc" : "asc",
+    }));
+  };
+
   if (loading)
     return (
       <div>
@@ -201,11 +229,10 @@ export default function RegistrationList() {
       {/* Notification Toast */}
       {notification && (
         <div
-          className={`fixed top-4 right-4 z-50 px-6 py-4 rounded-lg shadow-lg ${
-            notification.type === "success"
+          className={`fixed top-4 right-4 z-50 px-6 py-4 rounded-lg shadow-lg ${notification.type === "success"
               ? "bg-green-600 text-white"
               : "bg-red-600 text-white"
-          }`}
+            }`}
         >
           <div className="flex items-center space-x-2">
             <span>{notification.type === "success" ? "✓" : "✕"}</span>
@@ -250,11 +277,10 @@ export default function RegistrationList() {
         {registrationCategories.slice(0, 8).map((cat) => (
           <div
             key={cat.code + cat.value}
-            className={`p-4 rounded-lg shadow cursor-pointer transition-all ${
-              categoryFilter === cat.code
+            className={`p-4 rounded-lg shadow cursor-pointer transition-all ${categoryFilter === cat.code
                 ? "ring-2 ring-blue-500 bg-blue-50"
                 : "bg-white hover:bg-gray-50"
-            }`}
+              }`}
             onClick={() =>
               setCategoryFilter(categoryFilter === cat.code ? "all" : cat.code)
             }
@@ -280,7 +306,7 @@ export default function RegistrationList() {
         ))}
       </div>
 
-      {/* Filters Row */}
+      {/* Filters and Sort Row */}
       <div className="flex flex-wrap gap-4 mb-6 items-center bg-white p-4 rounded-lg shadow">
         <div>
           <label className="text-sm font-medium text-gray-700 mr-2">
@@ -314,6 +340,31 @@ export default function RegistrationList() {
             <option value="Pending">Pending</option>
             <option value="Failed">Failed</option>
           </select>
+        </div>
+
+        {/* Sort Controls */}
+        <div className="flex items-center space-x-2">
+          <label className="text-sm font-medium text-gray-700">Sort By:</label>
+          <div className="flex space-x-1">
+            <button
+              onClick={() => handleSortChange("createdAt")}
+              className={`px-3 py-1 text-sm rounded border ${sortConfig.key === "createdAt"
+                  ? "bg-blue-100 border-blue-500 text-blue-700"
+                  : "bg-white border-gray-300 text-gray-700 hover:bg-gray-50"
+                }`}
+            >
+              Regn Date {sortConfig.key === "createdAt" && (sortConfig.direction === "asc" ? "↑" : "↓")}
+            </button>
+            <button
+              onClick={() => handleSortChange("updatedAt")}
+              className={`px-3 py-1 text-sm rounded border ${sortConfig.key === "updatedAt"
+                  ? "bg-blue-100 border-blue-500 text-blue-700"
+                  : "bg-white border-gray-300 text-gray-700 hover:bg-gray-50"
+                }`}
+            >
+              Last Updated {sortConfig.key === "updatedAt" && (sortConfig.direction === "asc" ? "↑" : "↓")}
+            </button>
+          </div>
         </div>
 
         <button

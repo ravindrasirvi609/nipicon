@@ -80,7 +80,8 @@ export const exportToExcel = (
     "ID Card URL": item.idCardUrl,
     "Abstract Submitted": item.abstractSubmitted ? "Yes" : "No",
     "Registration Status": item.registrationStatus,
-    "Registration Date": new Date(item.createdAt).toLocaleDateString(),
+    "Registration Date": new Date(item.createdAt).toLocaleString(),
+    "Last Updated": new Date(item.updatedAt).toLocaleString(),
   }));
 
   // Create a new workbook and add the data
@@ -184,8 +185,8 @@ export const exportAbstractsToExcel = (
     "Supervisor Contact": item.supervisorContact || "",
     "Declaration Form URL": item.declarationFormUrl || "",
     "Brief Profile URL": item.briefProfileUrl || "",
-    "Submission Date": new Date(item.createdAt).toLocaleDateString(),
-    "Last Updated": new Date(item.updatedAt).toLocaleDateString(),
+    "Submission Date": new Date(item.createdAt).toLocaleString(),
+    "Last Updated": new Date(item.updatedAt).toLocaleString(),
   }));
 
   // Create a new workbook and add the data
