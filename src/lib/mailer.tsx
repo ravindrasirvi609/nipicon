@@ -140,6 +140,28 @@ export const sendEmail = async ({
             </Text>
           </>
         );
+      } else if (abstract.Status === "Rejected") {
+        statusSpecificContent = (
+          <>
+            <Text>
+              We regret to inform you that your abstract submission has been
+              reviewed and unfortunately cannot be accepted for NIPiCON 2026
+              International Research Conference.
+            </Text>
+            {abstract.rejectionComment && (
+              <Text>
+                <strong>
+                  Reviewer Committee Comments: {abstract.rejectionComment}
+                </strong>
+              </Text>
+            )}
+            <Text>
+              We appreciate your interest in participating in NIPiCON 2026 and
+              encourage you to consider submitting future research work to our
+              upcoming conferences.
+            </Text>
+          </>
+        );
       } else if (abstract.Status === "Revision" && abstract.rejectionComment) {
         statusSpecificContent = (
           <>

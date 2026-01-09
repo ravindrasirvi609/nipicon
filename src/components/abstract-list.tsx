@@ -242,11 +242,11 @@ export function AbstractList() {
   const trackStats = useMemo(() => {
     const stats: Record<
       string,
-      { total: number; accepted: number; pending: number; revision: number }
+      { total: number; accepted: number; pending: number; revision: number; rejected: number }
     > = {};
 
     tracks.forEach((track) => {
-      stats[track.code] = { total: 0, accepted: 0, pending: 0, revision: 0 };
+      stats[track.code] = { total: 0, accepted: 0, pending: 0, revision: 0, rejected: 0 };
     });
 
     abstracts.forEach((abstract) => {
@@ -255,6 +255,7 @@ export function AbstractList() {
         stats[code].total++;
         if (abstract.Status === "Accepted") stats[code].accepted++;
         else if (abstract.Status === "Revision") stats[code].revision++;
+        else if (abstract.Status === "Rejected") stats[code].rejected++;
         else stats[code].pending++;
       }
     });
@@ -329,8 +330,11 @@ export function AbstractList() {
                 <span className="text-yellow-600">
                   ⏳{trackStats[track.code]?.pending || 0}
                 </span>
-                <span className="text-red-600">
+                <span className="text-orange-600">
                   ↻{trackStats[track.code]?.revision || 0}
+                </span>
+                <span className="text-red-600">
+                  ✗{trackStats[track.code]?.rejected || 0}
                 </span>
               </div>
             </div>
@@ -351,7 +355,7 @@ export function AbstractList() {
           {isFilterOpen && (
             <div className="absolute left-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-10">
               <div className="py-1" role="menu">
-                {["all", "Pending", "InReview", "Revision", "Accepted"].map(
+                {["all", "Pending", "InReview", "Revision", "Accepted", "Rejected"].map(
                   (status) => (
                     <button
                       key={status}

@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Eye, Download, MoreVertical, Award, Globe, FileText, User } from "lucide-react";
 import FileViewerModal from "./FileViewerModal";
 import RejectPopup from "./RejectPopup";
+import RejectionPopup from "./RejectionPopup";
 import { designationOptions, tracks, getTrackCode } from "@/data";
 import { Abstract } from "@/lib/excelExport";
 
@@ -79,6 +80,13 @@ const AbstractTable: React.FC<AbstractTableProps> = ({
     isOpen: false,
     abstractId: null,
   });
+  const [rejectionPopup, setRejectionPopup] = useState<{
+    isOpen: boolean;
+    abstractId: string | null;
+  }>({
+    isOpen: false,
+    abstractId: null,
+  });
 
   const handleDownload = useCallback((abstract: Abstract) => {
     window.open(abstract.abstractFileUrl, "_blank");
@@ -121,6 +129,8 @@ const AbstractTable: React.FC<AbstractTableProps> = ({
         setRejectPopup({ isOpen: true, abstractId: abstract._id });
       } else if (newStatus === "Accepted") {
         setPresentationTypePopup({ isOpen: true, abstractId: abstract._id });
+      } else if (newStatus === "Rejected") {
+        setRejectionPopup({ isOpen: true, abstractId: abstract._id });
       } else {
         handleStatusUpdate(abstract._id, newStatus);
       }
@@ -146,6 +156,20 @@ const AbstractTable: React.FC<AbstractTableProps> = ({
       }
     },
     [rejectPopup.abstractId, handleStatusUpdate]
+  );
+
+  const handleFinalReject = useCallback(
+    async (comment: string) => {
+      if (rejectionPopup.abstractId) {
+        await handleStatusUpdate(
+          rejectionPopup.abstractId,
+          "Rejected",
+          comment
+        );
+        setRejectionPopup({ isOpen: false, abstractId: null });
+      }
+    },
+    [rejectionPopup.abstractId, handleStatusUpdate]
   );
 
   const SkeletonLoader = () => (
@@ -224,7 +248,7 @@ const AbstractTable: React.FC<AbstractTableProps> = ({
       title="Change Status"
     >
       <div className="grid gap-4">
-        {["Pending", "InReview", "Revision", "Accepted", "Delete"].map(
+        {["Pending", "InReview", "Revision", "Accepted", "Rejected", "Delete"].map(
           (status) => (
             <button
               key={status}
@@ -384,11 +408,13 @@ const AbstractTable: React.FC<AbstractTableProps> = ({
                 <span
                   className={`py-1 px-2 rounded-full text-xs ${abstract.Status === "Accepted"
                     ? "bg-green-500 text-white"
-                    : abstract.Status === "Revision"
-                      ? "bg-red-500 text-white"
-                      : abstract.Status === "InReview"
-                        ? "bg-blue-500 text-white"
-                        : "bg-yellow-200 text-yellow-800"
+                    : abstract.Status === "Rejected"
+                      ? "bg-red-700 text-white"
+                      : abstract.Status === "Revision"
+                        ? "bg-orange-500 text-white"
+                        : abstract.Status === "InReview"
+                          ? "bg-blue-500 text-white"
+                          : "bg-yellow-200 text-yellow-800"
                     }`}
                 >
                   {abstract.Status}
@@ -510,6 +536,11 @@ const AbstractTable: React.FC<AbstractTableProps> = ({
         isOpen={rejectPopup.isOpen}
         onClose={() => setRejectPopup({ isOpen: false, abstractId: null })}
         onReject={handleReject}
+      />
+      <RejectionPopup
+        isOpen={rejectionPopup.isOpen}
+        onClose={() => setRejectionPopup({ isOpen: false, abstractId: null })}
+        onReject={handleFinalReject}
       />
       <PresentationTypePopup />
       <StatusChangeModal />
