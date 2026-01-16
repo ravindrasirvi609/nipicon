@@ -487,8 +487,7 @@ export const getCategoryCode = (registrationType: string): string => {
 
   const category = registrationCategories.find(
     (cat) =>
-      cat.label.toLowerCase() === typeLower ||
-      cat.value === normalizedType
+      cat.label.toLowerCase() === typeLower || cat.value === normalizedType
   );
   return category?.code || "XX";
 };
