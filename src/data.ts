@@ -507,37 +507,37 @@ export const plans: Plan[] = [
   {
     name: "UG or PharmD Student",
     description: "Includes entry to all sessions and conference kit.",
-    spot: 1500,
+    spot: 2500,
     currency: "INR",
   },
   {
     name: "PG or PhD Student",
     description: "Includes entry to all sessions and conference kit.",
-    spot: 2500,
+    spot: 3000,
     currency: "INR",
   },
   {
     name: "Academicians",
     description: "Includes entry to all sessions, conference kit, and lunch.",
-    spot: 3000,
+    spot: 4000,
     currency: "INR",
   },
   {
     name: "Industrial Persons",
     description: "Includes entry to all sessions, conference kit, and lunch.",
-    spot: 4000,
+    spot: 5000,
     currency: "INR",
   },
   {
     name: "Foreign Delegates",
     description: "Includes entry to all sessions, conference kit, and lunch.",
-    spot: 200,
+    spot: 250,
     currency: "USD",
   },
   {
     name: "Foreign Presenter (Online)",
     description: "Includes online presentation slot.",
-    spot: 100,
+    spot: 150,
     currency: "USD",
   },
   {

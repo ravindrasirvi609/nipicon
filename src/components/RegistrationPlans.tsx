@@ -71,7 +71,7 @@ const RegistrationPlans: React.FC = () => {
 
         <div className="space-y-4 mb-6">
           <PriceDisplay
-            label="Fees (before 7th Jan, 2026)"
+            label="Fees (after 15th Jan, 2026)"
             price={plan.spot}
             currency={plan.currency}
           />
